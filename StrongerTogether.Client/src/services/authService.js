@@ -2,10 +2,17 @@ import axios from "axios";
 
 const API_URL = "https://localhost:7039/api/auth";
 
-export const register = async (userData) => {
-  return axios.post(`${API_URL}/register`, userData, {
-    withCredentials: true,
-  });
+export const register = async (formData) => {
+  try {
+    const response = await axios.post("https://localhost:7039/api/auth/register", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response.data || "Registration failed.";
+  }
 };
 
 export const login = async (credentials) => {

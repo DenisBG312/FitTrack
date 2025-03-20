@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Route, Routes, Link, useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Home from "./components/Home";
+import NavBar from "./components/NavBar";
 import { checkAuth, logout } from "./services/authService";
 
 const App = () => {
@@ -37,22 +39,10 @@ const App = () => {
   };
 
   return (
-    <div>
-      <nav>
-        {!isAuthenticated ? (
-          <>
-            <Link to="/login">Login</Link>
-            <Link to="/register">Register</Link>
-          </>
-        ) : (
-          <>
-            <span>Welcome back, {username}!</span>
-            <button onClick={handleLogout}>Logout</button>
-          </>
-        )}
-      </nav>
-
+    <div className="bg-gray-900 min-h-screen text-white" style={{ paddingTop: "80px" }}>
+      <NavBar isAuthenticated={isAuthenticated} username={username} handleLogout={handleLogout} />
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} setUsername={setUsername} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
