@@ -3,32 +3,32 @@
   "WorkspaceRootPath": "E:\\StrongerTogether\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|e:\\strongertogether\\strongertogether.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|solutionrelative:strongertogether.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|e:\\strongertogether\\strongertogether.server\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|solutionrelative:strongertogether.server\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|e:\\strongertogether\\strongertogether.server\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|solutionrelative:strongertogether.server\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|e:\\strongertogether\\strongertogether.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|solutionrelative:strongertogether.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|e:\\strongertogether\\strongertogether.server\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|solutionrelative:strongertogether.server\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|e:\\strongertogether\\strongertogether.server\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|solutionrelative:strongertogether.server\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|e:\\strongertogether\\strongertogether.server\\wwwroot\\uploads\\13c2ba44-fd56-4311-9420-6482fcfbb5e1.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|solutionrelative:strongertogether.server\\wwwroot\\uploads\\13c2ba44-fd56-4311-9420-6482fcfbb5e1.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|e:\\strongertogether\\strongertogether.server\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|solutionrelative:strongertogether.server\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\StrongerTogether\\StrongerTogether.Server\\Migrations\\20250320182257_Initial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:StrongerTogether.Server\\Migrations\\20250320182257_Initial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|e:\\strongertogether\\strongertogether.server\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|solutionrelative:strongertogether.server\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|e:\\strongertogether\\strongertogether.server\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|solutionrelative:strongertogether.server\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|e:\\strongertogether\\strongertogether.server\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{EB25B040-9E4C-465C-970A-F25FFB3A2CB0}|StrongerTogether.Server\\StrongerTogether.Server.csproj|solutionrelative:strongertogether.server\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,11 +38,23 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "13c2ba44-fd56-4311-9420-6482fcfbb5e1.jpg - Bitmap [960x958, 24 bit, JPG]",
+              "DocumentMoniker": "E:\\StrongerTogether\\StrongerTogether.Server\\wwwroot\\uploads\\13c2ba44-fd56-4311-9420-6482fcfbb5e1.jpg",
+              "RelativeDocumentMoniker": "StrongerTogether.Server\\wwwroot\\uploads\\13c2ba44-fd56-4311-9420-6482fcfbb5e1.jpg",
+              "ToolTip": "E:\\StrongerTogether\\StrongerTogether.Server\\wwwroot\\uploads\\13c2ba44-fd56-4311-9420-6482fcfbb5e1.jpg - Bitmap [960x958, 24 bit, JPG]",
+              "RelativeToolTip": "StrongerTogether.Server\\wwwroot\\uploads\\13c2ba44-fd56-4311-9420-6482fcfbb5e1.jpg - Bitmap [960x958, 24 bit, JPG]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
+              "WhenOpened": "2025-03-20T21:45:36.635Z",
+              "EditorCaption": " - Bitmap [960x958, 24 bit, JPG]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "WeatherForecastController.cs",
               "DocumentMoniker": "E:\\StrongerTogether\\StrongerTogether.Server\\Controllers\\WeatherForecastController.cs",
               "RelativeDocumentMoniker": "StrongerTogether.Server\\Controllers\\WeatherForecastController.cs",
@@ -55,59 +67,46 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "UserController.cs",
               "DocumentMoniker": "E:\\StrongerTogether\\StrongerTogether.Server\\Controllers\\UserController.cs",
               "RelativeDocumentMoniker": "StrongerTogether.Server\\Controllers\\UserController.cs",
               "ToolTip": "E:\\StrongerTogether\\StrongerTogether.Server\\Controllers\\UserController.cs",
               "RelativeToolTip": "StrongerTogether.Server\\Controllers\\UserController.cs",
-              "ViewState": "AgIAAFAAAAAAAAAAAAASwGsAAAAXAAAAAAAAAA==",
+              "ViewState": "AgIAAGYAAAAAAAAAAAAAAIMAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-20T18:31:08.85Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "20250320182257_Initial.cs",
-              "DocumentMoniker": "E:\\StrongerTogether\\StrongerTogether.Server\\Migrations\\20250320182257_Initial.cs",
-              "RelativeDocumentMoniker": "StrongerTogether.Server\\Migrations\\20250320182257_Initial.cs",
-              "ToolTip": "E:\\StrongerTogether\\StrongerTogether.Server\\Migrations\\20250320182257_Initial.cs",
-              "RelativeToolTip": "StrongerTogether.Server\\Migrations\\20250320182257_Initial.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-20T18:22:57.809Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 3,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "E:\\StrongerTogether\\StrongerTogether.Server\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "StrongerTogether.Server\\Data\\ApplicationDbContext.cs",
               "ToolTip": "E:\\StrongerTogether\\StrongerTogether.Server\\Data\\ApplicationDbContext.cs",
               "RelativeToolTip": "StrongerTogether.Server\\Data\\ApplicationDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAwAAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-20T18:12:12.421Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "User.cs",
               "DocumentMoniker": "E:\\StrongerTogether\\StrongerTogether.Server\\Models\\User.cs",
               "RelativeDocumentMoniker": "StrongerTogether.Server\\Models\\User.cs",
               "ToolTip": "E:\\StrongerTogether\\StrongerTogether.Server\\Models\\User.cs",
               "RelativeToolTip": "StrongerTogether.Server\\Models\\User.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAA5wCsAAABDAAAAAAAAAA==",
+              "ViewState": "AgIAABUAAAAAAAAAAAAowA0AAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-20T18:08:52.908Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "appsettings.json",
               "DocumentMoniker": "E:\\StrongerTogether\\StrongerTogether.Server\\appsettings.json",
               "RelativeDocumentMoniker": "StrongerTogether.Server\\appsettings.json",
@@ -115,18 +114,17 @@
               "RelativeToolTip": "StrongerTogether.Server\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-03-20T18:07:37.862Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-20T18:07:37.862Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Program.cs",
               "DocumentMoniker": "E:\\StrongerTogether\\StrongerTogether.Server\\Program.cs",
               "RelativeDocumentMoniker": "StrongerTogether.Server\\Program.cs",
               "ToolTip": "E:\\StrongerTogether\\StrongerTogether.Server\\Program.cs",
               "RelativeToolTip": "StrongerTogether.Server\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAACwAAAAAAAAAAAAAAEsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-20T18:06:41.074Z",
               "EditorCaption": ""

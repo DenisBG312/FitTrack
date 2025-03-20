@@ -39,7 +39,7 @@ namespace StrongerTogether.Server.Models
         [Column("weight")]
         public decimal Weight { get; set; }
 
-        [StringLength(500)]
+        [StringLength(500)] 
         [Column("profile_image_url")]
         public string ProfileImageUrl { get; set; } = string.Empty;
     }
