@@ -13,5 +13,11 @@ namespace StrongerTogether.Server.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Workout> Workouts { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

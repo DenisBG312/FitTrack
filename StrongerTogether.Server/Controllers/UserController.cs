@@ -27,51 +27,43 @@ namespace StrongerTogether.Server.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromForm] RegisterRequest model)
         {
-            // Check if the email already exists in the database
             if (await _context.Users.AnyAsync(u => u.Email == model.Email))
             {
                 return BadRequest(new { message = "Email already in use." });
             }
 
-            // Initialize imageUrl to null in case there's no image
             string imageUrl = null;
 
-            // Check if the profile image exists
             if (model.ProfileImage != null)
             {
                 var fileExtension = Path.GetExtension(model.ProfileImage.FileName);
-                var fileName = Guid.NewGuid() + fileExtension;  // Unique file name to avoid collision
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);  // Save path
+                var fileName = Guid.NewGuid() + fileExtension;
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
 
-                // Create directory if it doesn't exist
                 if (!Directory.Exists(Path.GetDirectoryName(filePath)))
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(filePath));
                 }
 
-                // Save the file to the server
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
                     await model.ProfileImage.CopyToAsync(fileStream);
                 }
 
-                // Save the relative URL of the image
                 imageUrl = "/uploads/" + fileName;
             }
 
-            // Create a new User entity and populate fields
             var user = new User
             {
                 Email = model.Email,
                 Username = model.Username,
-                Password = BCrypt.Net.BCrypt.HashPassword(model.Password),  // Hash password for security
-                Role = "User",  // Default user role
+                Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
+                Role = "User",
                 Height = model.Height,
                 Weight = model.Weight,
-                ProfileImageUrl = imageUrl  // Store the image URL or null
+                ProfileImageUrl = imageUrl
             };
 
-            // Add the new user to the database and save changes
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -122,7 +114,8 @@ namespace StrongerTogether.Server.Controllers
                     u.Role,
                     u.Height,
                     u.Weight,
-                    ProfileImageUrl = u.ProfileImageUrl != null ? $"{baseUrl}{u.ProfileImageUrl}" : null // Convert relative path to full URL
+                    ProfileImageUrl = u.ProfileImageUrl != null ? $"{baseUrl}{u.ProfileImageUrl}" : null,
+                    u.CreatedAt
                 })
                 .FirstOrDefaultAsync(u => u.Id.ToString() == userId);
 
