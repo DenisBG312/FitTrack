@@ -32,6 +32,7 @@ namespace StrongerTogether.Server.Controllers
                     Duration = w.Duration,
                     Difficulty = w.Difficulty,
                     TargetMuscles = w.TargetMuscles,
+                    VideoUrl = w.VideoUrl,
                     UserId = w.UserId,
                     User = new UserResponseDto
                     {
@@ -69,6 +70,7 @@ namespace StrongerTogether.Server.Controllers
                     Duration = w.Duration,
                     Difficulty = w.Difficulty,
                     TargetMuscles = w.TargetMuscles,
+                    VideoUrl = w.VideoUrl,
                     UserId = w.UserId,
                     User = new UserResponseDto
                     {
@@ -103,6 +105,11 @@ namespace StrongerTogether.Server.Controllers
                 return BadRequest("Invalid difficulty level.");
             }
 
+            if (!string.IsNullOrEmpty(workoutDto.VideoUrl) && !Uri.IsWellFormedUriString(workoutDto.VideoUrl, UriKind.Absolute))
+            {
+                return BadRequest("Invalid video URL format.");
+            }
+
             var userExists = await _context.Users.AnyAsync(u => u.Id == workoutDto.UserId);
             if (!userExists)
             {
@@ -116,6 +123,7 @@ namespace StrongerTogether.Server.Controllers
                 Duration = workoutDto.Duration,
                 Difficulty = workoutDto.Difficulty,
                 TargetMuscles = workoutDto.TargetMuscles,
+                VideoUrl = workoutDto.VideoUrl,
                 UserId = workoutDto.UserId,
                 CreatedAt = DateTime.UtcNow
             };
@@ -140,11 +148,17 @@ namespace StrongerTogether.Server.Controllers
                 return BadRequest("Invalid difficulty level.");
             }
 
+            if (!string.IsNullOrEmpty(workoutDto.VideoUrl) && !Uri.IsWellFormedUriString(workoutDto.VideoUrl, UriKind.Absolute))
+            {
+                return BadRequest("Invalid video URL format.");
+            }
+
             workout.Title = workoutDto.Title;
             workout.Description = workoutDto.Description;
             workout.Duration = workoutDto.Duration;
             workout.Difficulty = workoutDto.Difficulty;
             workout.TargetMuscles = workoutDto.TargetMuscles;
+            workout.VideoUrl = workoutDto.VideoUrl;
 
             _context.Entry(workout).State = EntityState.Modified;
 
@@ -213,9 +227,13 @@ namespace StrongerTogether.Server.Controllers
         [Required]
         public string TargetMuscles { get; set; } = string.Empty;
 
+        [Url]
+        public string VideoUrl { get; set; } = string.Empty;
+
         [Required]
         public Guid UserId { get; set; }
     }
+
 
     public class UpdateWorkoutDto
     {
@@ -235,6 +253,9 @@ namespace StrongerTogether.Server.Controllers
 
         [Required]
         public string TargetMuscles { get; set; } = string.Empty;
+
+        [Url]
+        public string VideoUrl { get; set; } = string.Empty;
     }
 
     public class WorkoutResponseDto
@@ -245,6 +266,7 @@ namespace StrongerTogether.Server.Controllers
         public int Duration { get; set; }
         public string Difficulty { get; set; }
         public string TargetMuscles { get; set; }
+        public string VideoUrl { get; set; }
         public Guid UserId { get; set; }
         public UserResponseDto User { get; set; }
         public DateTime CreatedAt { get; set; }

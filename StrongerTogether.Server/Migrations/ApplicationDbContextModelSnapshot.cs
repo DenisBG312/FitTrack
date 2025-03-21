@@ -117,6 +117,11 @@ namespace StrongerTogether.Server.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
+                    b.Property<string>("VideoUrl")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("video_url");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");

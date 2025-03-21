@@ -30,6 +30,9 @@ namespace StrongerTogether.Server.Models
         [Required]
         [Column("target_muscles")]
         public string TargetMuscles { get; set; } = string.Empty;
+        [Required]
+        [Column("video_url")]
+        public string VideoUrl { get; set; } = string.Empty;
 
         [Required]
         [Column("user_id")]

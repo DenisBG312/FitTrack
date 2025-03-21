@@ -8,6 +8,7 @@ import Home from "./components/Home";
 import NavBar from "./components/NavBar";
 import { checkAuth, logout } from "./services/authService";
 import Workouts from "./components/Workouts";
+import WorkoutDetails from './components/WorkoutDetails';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -48,6 +49,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
         <Route path="/workouts" element={<Workouts />} />
+        <Route path="/workouts/:id" element={<WorkoutDetails />} />
       </Routes>
     </div>
   );

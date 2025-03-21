@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaDumbbell, FaUserCircle, FaRunning, FaClock } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const Workouts = () => {
   const [workouts, setWorkouts] = useState([]);
@@ -45,22 +46,22 @@ const Workouts = () => {
 
   const cardVariants = {
     hidden: { y: 50, opacity: 0 },
-    visible: { 
-      y: 0, 
+    visible: {
+      y: 0,
       opacity: 1,
-      transition: { 
-        type: "spring", 
-        stiffness: 100, 
-        damping: 15 
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15
       }
     },
-    hover: { 
-      scale: 1.03, 
+    hover: {
+      scale: 1.03,
       boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
-      transition: { 
-        type: "spring", 
-        stiffness: 400, 
-        damping: 10 
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 10
       }
     }
   };
@@ -75,7 +76,7 @@ const Workouts = () => {
       >
         <div className="flex items-center justify-center mb-12">
           <FaDumbbell className="text-yellow-400 text-4xl mr-4" />
-          <motion.h1 
+          <motion.h1
             className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -88,11 +89,11 @@ const Workouts = () => {
         {isLoading && (
           <div className="flex justify-center items-center h-64">
             <motion.div
-              animate={{ 
+              animate={{
                 rotate: 360,
                 scale: [1, 1.2, 1]
               }}
-              transition={{ 
+              transition={{
                 rotate: { repeat: Infinity, duration: 2, ease: "linear" },
                 scale: { repeat: Infinity, duration: 1, ease: "easeInOut" }
               }}
@@ -101,9 +102,9 @@ const Workouts = () => {
             </motion.div>
           </div>
         )}
-        
+
         {error && (
-          <motion.div 
+          <motion.div
             className="bg-red-600 text-white p-6 rounded-lg mb-8 max-w-md mx-auto"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -114,7 +115,7 @@ const Workouts = () => {
         )}
 
         {!isLoading && workouts.length === 0 && (
-          <motion.div 
+          <motion.div
             className="text-center p-8 bg-gray-800 rounded-lg max-w-lg mx-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -124,7 +125,7 @@ const Workouts = () => {
           </motion.div>
         )}
 
-        <motion.div 
+        <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
           variants={containerVariants}
           initial="hidden"
@@ -137,35 +138,36 @@ const Workouts = () => {
               variants={cardVariants}
               whileHover="hover"
             >
+              <Link to={`/workouts/${workout.id}`}>
               <div className="p-6">
                 <h2 className="text-2xl font-bold text-yellow-400 mb-2">
                   {workout.title}
                 </h2>
-                
+
                 <p className="text-gray-300 mb-4">{workout.description}</p>
-                
+
                 <div className="flex flex-wrap gap-3 mb-4">
-                  <motion.span 
+                  <motion.span
                     className={`px-3 py-1 rounded-full text-xs font-medium ${difficultyColors[workout.difficulty] || "bg-blue-500"} text-white`}
                     whileHover={{ scale: 1.1 }}
                   >
                     {workout.difficulty}
                   </motion.span>
-                  
-                  <motion.span 
+
+                  <motion.span
                     className="px-3 py-1 rounded-full text-xs font-medium bg-purple-600 text-white"
                     whileHover={{ scale: 1.1 }}
                   >
                     {workout.targetMuscles}
                   </motion.span>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div className="flex items-center">
                     <FaClock className="text-yellow-400 mr-2" />
                     <span>{workout.duration} mins</span>
                   </div>
-                  
+
                   <div className="flex items-center">
                     <FaRunning className="text-yellow-400 mr-2" />
                     <span>{workout.targetMuscles}</span>
@@ -174,14 +176,14 @@ const Workouts = () => {
 
                 <div className="pt-4 border-t border-gray-700 mt-2">
                   <div className="flex items-center">
-                    <motion.div 
+                    <motion.div
                       className="h-8 w-8 rounded-full overflow-hidden mr-3 bg-gray-700"
                       whileHover={{ scale: 1.1 }}
                     >
                       {workout.user?.profileImageUrl ? (
-                        <img 
-                          src={workout.user.profileImageUrl} 
-                          alt={workout.user.username} 
+                        <img
+                          src={workout.user.profileImageUrl}
+                          alt={workout.user.username}
                           className="h-full w-full object-cover"
                         />
                       ) : (
@@ -197,6 +199,7 @@ const Workouts = () => {
                   </div>
                 </div>
               </div>
+              </Link>
             </motion.div>
           ))}
         </motion.div>
