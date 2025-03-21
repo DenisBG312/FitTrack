@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./components/Home";
 import NavBar from "./components/NavBar";
 import { checkAuth, logout } from "./services/authService";
+import Workouts from "./components/Workouts";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -46,6 +47,7 @@ const App = () => {
         <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} setUsername={setUsername} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+        <Route path="/workouts" element={<Workouts />} />
       </Routes>
     </div>
   );

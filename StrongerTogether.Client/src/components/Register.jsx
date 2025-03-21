@@ -6,6 +6,8 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -22,6 +24,8 @@ const Register = () => {
     formData.append("email", email);
     formData.append("password", password);
     formData.append("username", username);
+    formData.append("height", height);
+    formData.append("weight", weight);
     formData.append("profileImage", profileImage);
   
     try {
@@ -73,6 +77,28 @@ const Register = () => {
               required
             />
           </div>
+
+          <div>
+  <input
+    type="number"
+    placeholder="Height (cm)"
+    value={height}
+    onChange={(e) => setHeight(e.target.value)}
+    className="w-full p-3 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-yellow-500 outline-none"
+    required
+  />
+</div>
+
+<div>
+  <input
+    type="number"
+    placeholder="Weight (kg)"
+    value={weight}
+    onChange={(e) => setWeight(e.target.value)}
+    className="w-full p-3 bg-gray-700 text-white rounded-md focus:ring-2 focus:ring-yellow-500 outline-none"
+    required
+  />
+</div>
 
           <div>
             <input

@@ -19,10 +19,10 @@ const NavBar = ({ isAuthenticated, username, handleLogout }) => {
   return (
     <nav className={`${scrolled ? "bg-gray-900 shadow-lg" : "bg-gradient-to-r from-gray-900 to-gray-800"} text-white fixed top-0 left-0 z-50 w-full transition-all duration-300 ${scrolled ? "h-16" : "h-20"}`}>
       <div className="container mx-auto px-6 h-full flex justify-between items-center">
-        
+
         {/* Logo with Animation */}
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="text-2xl font-bold flex items-center gap-2 transition-all duration-300 transform hover:scale-105"
         >
           <FaDumbbell className="text-yellow-500" size={26} />
@@ -33,31 +33,42 @@ const NavBar = ({ isAuthenticated, username, handleLogout }) => {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex md:items-center md:space-x-8">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className="relative group flex items-center gap-2 font-medium text-gray-200 hover:text-white"
           >
-            <AiOutlineHome size={20} className="text-yellow-500 group-hover:animate-pulse" /> 
+            <AiOutlineHome size={20} className="text-yellow-500 group-hover:animate-pulse" />
             <span>Home</span>
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-500 transition-all duration-300 group-hover:w-full"></span>
           </Link>
 
+          {isAuthenticated && (
+            <Link
+              to="/workouts"
+              className="relative group flex items-center gap-2 font-medium text-gray-200 hover:text-white"
+            >
+              <FaDumbbell size={20} className="text-yellow-500 group-hover:animate-pulse" />
+              <span>Workouts</span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-500 transition-all duration-300 group-hover:w-full"></span>
+            </Link>
+          )}
+
           {isAuthenticated ? (
             <>
-              <Link 
-                to="/profile" 
+              <Link
+                to="/profile"
                 className="relative group flex items-center gap-2 font-medium text-gray-200 hover:text-white"
               >
-                <FaUser size={18} className="text-yellow-500 group-hover:animate-pulse" /> 
+                <FaUser size={18} className="text-yellow-500 group-hover:animate-pulse" />
                 <span>Profile</span>
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-500 transition-all duration-300 group-hover:w-full"></span>
               </Link>
-              
+
               <div className="px-4 py-1 rounded-full bg-gray-800 bg-opacity-50 flex items-center">
                 <span className="text-gray-300 text-sm mr-2">Welcome,</span>
                 <span className="font-semibold text-yellow-400">{username}</span>
               </div>
-              
+
               <button
                 onClick={handleLogout}
                 className="px-5 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-gray-900 font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2 transform hover:-translate-y-0.5"
@@ -67,17 +78,17 @@ const NavBar = ({ isAuthenticated, username, handleLogout }) => {
             </>
           ) : (
             <>
-              <Link 
-                to="/login" 
+              <Link
+                to="/login"
                 className="relative group flex items-center gap-2 font-medium text-gray-200 hover:text-white"
               >
-                <AiOutlineLogin size={20} className="text-yellow-500 group-hover:animate-pulse" /> 
+                <AiOutlineLogin size={20} className="text-yellow-500 group-hover:animate-pulse" />
                 <span>Login</span>
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-500 transition-all duration-300 group-hover:w-full"></span>
               </Link>
-              
-              <Link 
-                to="/register" 
+
+              <Link
+                to="/register"
                 className="px-5 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-gray-900 font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2 transform hover:-translate-y-0.5"
               >
                 <AiOutlineUserAdd size={18} /> Register
@@ -103,35 +114,44 @@ const NavBar = ({ isAuthenticated, username, handleLogout }) => {
       </div>
 
       {/* Mobile Navigation */}
-      <div 
-        className={`md:hidden transition-all duration-300 overflow-hidden ${
-          mobileMenuOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
-        }`}
+      <div
+        className={`md:hidden transition-all duration-300 overflow-hidden ${mobileMenuOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
+          }`}
       >
         <div className="flex flex-col space-y-4 px-6 py-4 bg-gray-800 border-t border-gray-700">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className="flex items-center gap-2 py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200"
             onClick={() => setMobileMenuOpen(false)}
           >
             <AiOutlineHome size={20} className="text-yellow-500" /> Home
           </Link>
 
+          {isAuthenticated && (
+            <Link
+              to="/workouts"
+              className="flex items-center gap-2 py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <FaDumbbell size={20} className="text-yellow-500" /> Workouts
+            </Link>
+          )}
+
           {isAuthenticated ? (
             <>
-              <Link 
-                to="/profile" 
+              <Link
+                to="/profile"
                 className="flex items-center gap-2 py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <FaUser size={18} className="text-yellow-500" /> Profile
               </Link>
-              
+
               <div className="py-2 px-4 bg-gray-700 bg-opacity-50 rounded-lg">
                 <span className="text-gray-300 text-sm">Logged in as </span>
                 <span className="font-semibold text-yellow-400">{username}</span>
               </div>
-              
+
               <button
                 onClick={() => {
                   handleLogout();
@@ -144,16 +164,16 @@ const NavBar = ({ isAuthenticated, username, handleLogout }) => {
             </>
           ) : (
             <>
-              <Link 
-                to="/login" 
+              <Link
+                to="/login"
                 className="flex items-center gap-2 py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <AiOutlineLogin size={20} className="text-yellow-500" /> Login
               </Link>
-              
-              <Link 
-                to="/register" 
+
+              <Link
+                to="/register"
                 className="py-2 px-4 bg-gradient-to-r from-yellow-500 to-yellow-600 text-gray-900 font-semibold rounded-lg flex items-center gap-2 justify-center"
                 onClick={() => setMobileMenuOpen(false)}
               >
