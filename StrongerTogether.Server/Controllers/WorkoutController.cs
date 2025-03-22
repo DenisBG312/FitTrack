@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using StrongerTogether.Server.Data;
 using StrongerTogether.Server.Models;
 using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace StrongerTogether.Server.Controllers
 {
@@ -12,9 +16,11 @@ namespace StrongerTogether.Server.Controllers
     public class WorkoutController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        public WorkoutController(ApplicationDbContext context)
+        private readonly IConfiguration _configuration;
+        public WorkoutController(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -100,38 +106,50 @@ namespace StrongerTogether.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Workout>> CreateWorkout([FromBody] CreateWorkoutDto workoutDto)
         {
-            if (!IsValidDifficulty(workoutDto.Difficulty))
+            var jwtCookie = Request.Cookies["jwt"];
+            if (string.IsNullOrEmpty(jwtCookie))
             {
-                return BadRequest("Invalid difficulty level.");
+                return Unauthorized("No JWT token found in cookie");
             }
 
-            if (!string.IsNullOrEmpty(workoutDto.VideoUrl) && !Uri.IsWellFormedUriString(workoutDto.VideoUrl, UriKind.Absolute))
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:SecretKey"]);
+
+            try
             {
-                return BadRequest("Invalid video URL format.");
+                tokenHandler.ValidateToken(jwtCookie, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var parsedToken = (JwtSecurityToken)validatedToken;
+                var userId = parsedToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+
+                var workout = new Workout
+                {
+                    Title = workoutDto.Title,
+                    Description = workoutDto.Description,
+                    Duration = workoutDto.Duration,
+                    Difficulty = workoutDto.Difficulty,
+                    TargetMuscles = workoutDto.TargetMuscles,
+                    VideoUrl = workoutDto.VideoUrl,
+                    UserId = Guid.Parse(userId),
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.Workouts.Add(workout);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetWorkout), new { id = workout.Id }, workout);
             }
-
-            var userExists = await _context.Users.AnyAsync(u => u.Id == workoutDto.UserId);
-            if (!userExists)
+            catch (Exception ex)
             {
-                return BadRequest("User does not exist.");
+                return Unauthorized($"Invalid token: {ex.Message}");
             }
-
-            var workout = new Workout
-            {
-                Title = workoutDto.Title,
-                Description = workoutDto.Description,
-                Duration = workoutDto.Duration,
-                Difficulty = workoutDto.Difficulty,
-                TargetMuscles = workoutDto.TargetMuscles,
-                VideoUrl = workoutDto.VideoUrl,
-                UserId = workoutDto.UserId,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            _context.Workouts.Add(workout);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetWorkout), new { id = workout.Id }, workout);
         }
 
         [HttpPut("{id}")]

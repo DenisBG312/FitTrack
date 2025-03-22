@@ -8,7 +8,7 @@ import Home from "./components/Home";
 import NavBar from "./components/NavBar";
 import { checkAuth, logout } from "./services/authService";
 import Workouts from "./components/Workouts";
-import WorkoutDetails from './components/WorkoutDetails';
+import WorkoutDetails from "./components/WorkoutDetails";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
