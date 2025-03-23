@@ -7,8 +7,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./components/Home";
 import NavBar from "./components/NavBar";
 import { checkAuth, logout } from "./services/authService";
-import Workouts from "./components/Workouts";
-import WorkoutDetails from "./components/WorkoutDetails";
+import Workouts from "./components/WorkoutComponents/Workouts";
+import WorkoutDetails from "./components/WorkoutComponents/WorkoutDetails";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
