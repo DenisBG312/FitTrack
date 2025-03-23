@@ -235,16 +235,49 @@ namespace StrongerTogether.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWorkout(Guid id)
         {
-            var workout = await _context.Workouts.FindAsync(id);
-            if (workout == null)
+            var jwtCookie = Request.Cookies["jwt"];
+            if (string.IsNullOrEmpty(jwtCookie))
             {
-                return NotFound();
+                return Unauthorized("No JWT token found in cookie.");
             }
 
-            _context.Workouts.Remove(workout);
-            await _context.SaveChangesAsync();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:SecretKey"]);
 
-            return NoContent();
+            try
+            {
+                tokenHandler.ValidateToken(jwtCookie, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var parsedToken = (JwtSecurityToken)validatedToken;
+                var userId = parsedToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+
+                var workout = await _context.Workouts.FindAsync(id);
+                if (workout == null)
+                {
+                    return NotFound();
+                }
+
+                if (!Guid.TryParse(userId, out Guid userGuid) || workout.UserId != userGuid)
+                {
+                    return Unauthorized("You can only delete your own workouts.");
+                }
+
+                _context.Workouts.Remove(workout);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized($"Invalid token: {ex.Message}");
+            }
         }
 
         private bool IsValidDifficulty(string difficulty)
