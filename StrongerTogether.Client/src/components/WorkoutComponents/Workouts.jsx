@@ -16,6 +16,7 @@ const Workouts = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [userId, setUserId] = useState(null);
   const [editedWorkout, setEditedWorkout] = useState({
     id: "",
     title: "",
@@ -50,6 +51,21 @@ const Workouts = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const response = await axios.get("https://localhost:7039/api/auth/profile", {
+          withCredentials: true,
+        });
+        setUserId(response.data.id);
+      } catch (error) {
+        console.error("Error fetching user ID:", error);
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   useEffect(() => {
     fetchWorkouts();
@@ -102,13 +118,14 @@ const Workouts = () => {
         editedWorkout,
         { withCredentials: true }
       );
-  
+
+      // Update the workout in the local state to avoid refreshing
       setWorkouts((prevWorkouts) =>
         prevWorkouts.map((workout) =>
           workout.id === editedWorkout.id ? editedWorkout : workout
         )
       );
-  
+
       setIsEditModalOpen(false);
     } catch (error) {
       console.error("Error updating workout:", error);
@@ -147,7 +164,7 @@ const Workouts = () => {
   const filteredWorkouts = workouts.filter((workout) => {
     const matchesSearch = searchTerm
       ? workout.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        workout.description.toLowerCase().includes(searchTerm.toLowerCase())
+      workout.description.toLowerCase().includes(searchTerm.toLowerCase())
       : true;
 
     const matchesDifficulty = filterDifficulty
@@ -258,6 +275,7 @@ const Workouts = () => {
           isEditModalOpen={isEditModalOpen}
           setIsEditModalOpen={setIsEditModalOpen}
           editedWorkout={editedWorkout}
+          setEditedWorkout={setEditedWorkout}
           handleEditInputChange={handleEditInputChange}
           handleUpdateWorkout={handleUpdateWorkout}
         />
@@ -319,6 +337,7 @@ const Workouts = () => {
             <WorkoutCard
               key={workout.id}
               workout={workout}
+              userId={userId}
               handleDeleteWorkout={handleDeleteWorkout}
               handleEditWorkout={handleEditWorkout}
               difficultyColors={difficultyColors}

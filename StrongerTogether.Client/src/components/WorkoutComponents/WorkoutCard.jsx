@@ -2,19 +2,24 @@ import React from "react";
 import { FaClock, FaFire, FaUserCircle, FaTrash, FaEdit } from "react-icons/fa";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const WorkoutCard = ({
   workout,
+  userId,
   handleDeleteWorkout,
   handleEditWorkout,
   difficultyColors,
   formatDate,
 }) => {
+  const isOwner = workout.userId === userId;
+  const navigate = useNavigate();
+
   return (
     <motion.div
-      className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden shadow-lg border border-gray-700"
+      className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden shadow-lg border border-gray-700 cursor-pointer"
       whileHover={{ scale: 1.05, boxShadow: "0 15px 30px rgba(0,0,0,0.3)" }}
+      onClick={() => navigate(`/workouts/${workout.id}`)}
     >
       <div className="p-6 flex flex-col h-full">
         <div className="flex justify-between items-center mb-4">
@@ -65,22 +70,32 @@ const WorkoutCard = ({
               <div className="text-xs text-gray-500 mr-3">
                 {formatDate(workout.createdAt)}
               </div>
-              <motion.button
-                onClick={() => handleEditWorkout(workout)}
-                className="text-gray-400 hover:text-yellow-500 transition-colors duration-200 mr-2"
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <FaEdit size={14} />
-              </motion.button>
-              <motion.button
-                onClick={(e) => handleDeleteWorkout(e, workout.id)}
-                className="text-gray-400 hover:text-red-500 transition-colors duration-200"
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <FaTrash size={14} />
-              </motion.button>
+              {isOwner && (
+                <motion.div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditWorkout(workout);
+                  }}
+                  className="text-gray-400 hover:text-yellow-500 transition-colors duration-200 mr-2 cursor-pointer"
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <FaEdit size={14} />
+                </motion.div>
+              )}
+              {isOwner && (
+                <motion.div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteWorkout(e, workout.id);
+                  }}
+                  className="text-gray-400 hover:text-red-500 transition-colors duration-200 cursor-pointer"
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <FaTrash size={14} />
+                </motion.div>
+              )}
             </div>
           </div>
         </div>

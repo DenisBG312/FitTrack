@@ -1,15 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
+// eslint-disable-next-line no-unused-vars
+import axios from "axios";
 
 const EditWorkoutModal = ({
   isEditModalOpen,
   setIsEditModalOpen,
   editedWorkout,
+  // eslint-disable-next-line no-unused-vars
+  setEditedWorkout,
   handleEditInputChange,
-  handleUpdateWorkout,
+  handleUpdateWorkout
 }) => {
+  // eslint-disable-next-line no-unused-vars
+  const [isUpdating, setIsUpdating] = useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const [error, setError] = useState(null);
+
   return (
     <AnimatePresence>
       {isEditModalOpen && (
@@ -149,6 +158,10 @@ const EditWorkoutModal = ({
                   />
                 </div>
 
+                {error && (
+                  <div className="text-red-500 text-sm mt-2">{error}</div>
+                )}
+
                 <div className="pt-4 border-t border-gray-700 flex space-x-4 justify-end">
                   <motion.button
                     type="button"
@@ -167,8 +180,9 @@ const EditWorkoutModal = ({
                       boxShadow: "0 0 15px rgba(251, 191, 36, 0.5)",
                     }}
                     whileTap={{ scale: 0.98 }}
+                    disabled={isUpdating}
                   >
-                    Update Workout
+                    {isUpdating ? "Updating..." : "Update Workout"}
                   </motion.button>
                 </div>
               </form>

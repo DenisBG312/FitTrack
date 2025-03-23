@@ -161,42 +161,75 @@ namespace StrongerTogether.Server.Controllers
                 return NotFound();
             }
 
-            if (!IsValidDifficulty(workoutDto.Difficulty))
+            var jwtCookie = Request.Cookies["jwt"];
+            if (string.IsNullOrEmpty(jwtCookie))
             {
-                return BadRequest("Invalid difficulty level.");
+                return Unauthorized("No JWT token found in cookie.");
             }
 
-            if (!string.IsNullOrEmpty(workoutDto.VideoUrl) && !Uri.IsWellFormedUriString(workoutDto.VideoUrl, UriKind.Absolute))
-            {
-                return BadRequest("Invalid video URL format.");
-            }
-
-            workout.Title = workoutDto.Title;
-            workout.Description = workoutDto.Description;
-            workout.Duration = workoutDto.Duration;
-            workout.Difficulty = workoutDto.Difficulty;
-            workout.TargetMuscles = workoutDto.TargetMuscles;
-            workout.VideoUrl = workoutDto.VideoUrl;
-
-            _context.Entry(workout).State = EntityState.Modified;
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:SecretKey"]);
 
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!WorkoutExists(id))
+                tokenHandler.ValidateToken(jwtCookie, new TokenValidationParameters
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
 
-            return NoContent();
+                var parsedToken = (JwtSecurityToken)validatedToken;
+                var userId = parsedToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+
+                if (!Guid.TryParse(userId, out Guid userGuid) || workout.UserId != userGuid)
+                {
+                    return Unauthorized("You can only edit your own workouts.");
+                }
+
+                if (!IsValidDifficulty(workoutDto.Difficulty))
+                {
+                    return BadRequest("Invalid difficulty level.");
+                }
+
+                if (!string.IsNullOrEmpty(workoutDto.VideoUrl) && !Uri.IsWellFormedUriString(workoutDto.VideoUrl, UriKind.Absolute))
+                {
+                    return BadRequest("Invalid video URL format.");
+                }
+
+                workout.Title = workoutDto.Title;
+                workout.Description = workoutDto.Description;
+                workout.Duration = workoutDto.Duration;
+                workout.Difficulty = workoutDto.Difficulty;
+                workout.TargetMuscles = workoutDto.TargetMuscles;
+                workout.VideoUrl = workoutDto.VideoUrl;
+
+                _context.Entry(workout).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!WorkoutExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized($"Invalid token: {ex.Message}");
+            }
         }
 
         [HttpDelete("{id}")]
