@@ -3,7 +3,7 @@
 ## 🚀 Overview
 The **Fitness Web Application** is a modern and scalable platform designed to help users track their workouts, monitor nutrition, and visualize progress—all in one seamless experience.
 
-![App Overview](placeholder-for-image-url)
+![App Overview](https://github.com/DenisBG312/FitTrack/blob/main/Project-Images/Home.png)
 
 ---
 ## ✨ Features
