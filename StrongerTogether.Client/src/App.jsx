@@ -23,6 +23,7 @@ const App = () => {
         setUsername(userData.username);
       } catch (error) {
         setIsAuthenticated(false);
+        console.log(error);
       }
     };
 

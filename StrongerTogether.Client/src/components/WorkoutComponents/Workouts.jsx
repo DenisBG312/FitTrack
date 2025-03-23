@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaDumbbell, FaPlus, FaSearch } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { FaDumbbell, FaPlus } from "react-icons/fa";
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
 import WorkoutCard from "./WorkoutCard";
 import WorkoutFilters from "./WorkoutFilters";
 import AddWorkoutModal from "./AddWorkoutModal";
+import EditWorkoutModal from "./EditWorkoutModal";
 import LoadingSpinner from "../LoadingSpinner";
 import ErrorAlert from "../ErrorAlert";
 
@@ -13,6 +15,16 @@ const Workouts = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editedWorkout, setEditedWorkout] = useState({
+    id: "",
+    title: "",
+    description: "",
+    duration: 0,
+    difficulty: "Beginner",
+    targetMuscles: "",
+    videoUrl: "",
+  });
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [filterDifficulty, setFilterDifficulty] = useState("");
@@ -23,7 +35,7 @@ const Workouts = () => {
     duration: 0,
     difficulty: "Beginner",
     targetMuscles: "",
-    videoUrl: ""
+    videoUrl: "",
   });
 
   const fetchWorkouts = async () => {
@@ -47,7 +59,15 @@ const Workouts = () => {
     const { name, value } = e.target;
     setNewWorkout({
       ...newWorkout,
-      [name]: value
+      [name]: value,
+    });
+  };
+
+  const handleEditInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditedWorkout({
+      ...editedWorkout,
+      [name]: value,
     });
   };
 
@@ -55,7 +75,7 @@ const Workouts = () => {
     e.preventDefault();
     try {
       await axios.post("https://localhost:7039/api/Workout", newWorkout, {
-        withCredentials: true
+        withCredentials: true,
       });
       await fetchWorkouts();
 
@@ -66,11 +86,33 @@ const Workouts = () => {
         duration: 0,
         difficulty: "Beginner",
         targetMuscles: "",
-        videoUrl: ""
+        videoUrl: "",
       });
     } catch (error) {
       console.error("Error adding workout:", error);
       setError("Failed to add workout. Please try again.");
+    }
+  };
+
+  const handleUpdateWorkout = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(
+        `https://localhost:7039/api/Workout/${editedWorkout.id}`,
+        editedWorkout,
+        { withCredentials: true }
+      );
+  
+      setWorkouts((prevWorkouts) =>
+        prevWorkouts.map((workout) =>
+          workout.id === editedWorkout.id ? editedWorkout : workout
+        )
+      );
+  
+      setIsEditModalOpen(false);
+    } catch (error) {
+      console.error("Error updating workout:", error);
+      setError("Failed to update workout. Please try again.");
     }
   };
 
@@ -81,7 +123,7 @@ const Workouts = () => {
     if (window.confirm("Are you sure you want to delete this workout?")) {
       try {
         await axios.delete(`https://localhost:7039/api/Workout/${workoutId}`, {
-          withCredentials: true
+          withCredentials: true,
         });
         await fetchWorkouts();
       } catch (error) {
@@ -91,16 +133,21 @@ const Workouts = () => {
     }
   };
 
+  const handleEditWorkout = (workout) => {
+    setEditedWorkout(workout);
+    setIsEditModalOpen(true);
+  };
+
   const difficultyColors = {
     Beginner: "bg-green-500",
     Intermediate: "bg-yellow-500",
-    Advanced: "bg-red-500"
+    Advanced: "bg-red-500",
   };
 
-  const filteredWorkouts = workouts.filter(workout => {
+  const filteredWorkouts = workouts.filter((workout) => {
     const matchesSearch = searchTerm
       ? workout.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      workout.description.toLowerCase().includes(searchTerm.toLowerCase())
+        workout.description.toLowerCase().includes(searchTerm.toLowerCase())
       : true;
 
     const matchesDifficulty = filterDifficulty
@@ -119,17 +166,17 @@ const Workouts = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const headerIconVariants = {
     initial: { rotate: 0 },
     animate: {
       rotate: [0, 15, -15, 15, -15, 0],
-      transition: { duration: 0.6 }
-    }
+      transition: { duration: 0.6 },
+    },
   };
 
   const difficultyOptions = ["Beginner", "Intermediate", "Advanced"];
@@ -137,10 +184,10 @@ const Workouts = () => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     }).format(date);
   };
 
@@ -176,7 +223,7 @@ const Workouts = () => {
             whileHover={{
               scale: 1.05,
               backgroundColor: "#fbbf24",
-              boxShadow: "0 0 20px rgba(251, 191, 36, 0.5)"
+              boxShadow: "0 0 20px rgba(251, 191, 36, 0.5)",
             }}
             whileTap={{ scale: 0.95 }}
           >
@@ -205,6 +252,14 @@ const Workouts = () => {
           newWorkout={newWorkout}
           handleInputChange={handleInputChange}
           handleAddWorkout={handleAddWorkout}
+        />
+
+        <EditWorkoutModal
+          isEditModalOpen={isEditModalOpen}
+          setIsEditModalOpen={setIsEditModalOpen}
+          editedWorkout={editedWorkout}
+          handleEditInputChange={handleEditInputChange}
+          handleUpdateWorkout={handleUpdateWorkout}
         />
 
         {isLoading && <LoadingSpinner />}
@@ -265,6 +320,7 @@ const Workouts = () => {
               key={workout.id}
               workout={workout}
               handleDeleteWorkout={handleDeleteWorkout}
+              handleEditWorkout={handleEditWorkout}
               difficultyColors={difficultyColors}
               formatDate={formatDate}
             />
