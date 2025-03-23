@@ -14,6 +14,7 @@ namespace StrongerTogether.Server.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Workout> Workouts { get; set; }
+        public DbSet<NutritionLog> NutritionLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

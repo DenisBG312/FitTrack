@@ -8,6 +8,8 @@ using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using StrongerTogether.Server.DTOs.User;
+using StrongerTogether.Server.DTOs.Workout;
 
 namespace StrongerTogether.Server.Controllers
 {
@@ -290,82 +292,6 @@ namespace StrongerTogether.Server.Controllers
         {
             return _context.Workouts.Any(e => e.Id == id);
         }
-    }
-
-    public class CreateWorkoutDto
-    {
-        [Required]
-        [StringLength(100)]
-        public string Title { get; set; } = string.Empty;
-
-        [Required]
-        public string Description { get; set; } = string.Empty;
-
-        [Required]
-        [Range(1, 600)]
-        public int Duration { get; set; }
-
-        [Required]
-        public string Difficulty { get; set; } = string.Empty;
-
-        [Required]
-        public string TargetMuscles { get; set; } = string.Empty;
-
-        [Url]
-        public string VideoUrl { get; set; } = string.Empty;
-
-        [Required]
-        public Guid UserId { get; set; }
-    }
-
-
-    public class UpdateWorkoutDto
-    {
-        [Required]
-        [StringLength(100)]
-        public string Title { get; set; } = string.Empty;
-
-        [Required]
-        public string Description { get; set; } = string.Empty;
-
-        [Required]
-        [Range(1, 600)]
-        public int Duration { get; set; }
-
-        [Required]
-        public string Difficulty { get; set; } = string.Empty;
-
-        [Required]
-        public string TargetMuscles { get; set; } = string.Empty;
-
-        [Url]
-        public string VideoUrl { get; set; } = string.Empty;
-    }
-
-    public class WorkoutResponseDto
-    {
-        public Guid Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public int Duration { get; set; }
-        public string Difficulty { get; set; }
-        public string TargetMuscles { get; set; }
-        public string VideoUrl { get; set; }
-        public Guid UserId { get; set; }
-        public UserResponseDto User { get; set; }
-        public DateTime CreatedAt { get; set; }
-    }
-
-    public class UserResponseDto
-    {
-        public Guid Id { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string Role { get; set; }
-        public decimal Height { get; set; }
-        public decimal Weight { get; set; }
-        public string ProfileImageUrl { get; set; }
-        public DateTime CreatedAt { get; set; }
     }
 }
 

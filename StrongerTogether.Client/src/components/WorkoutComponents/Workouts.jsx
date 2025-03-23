@@ -313,15 +313,6 @@ const Workouts = () => {
               <div>
                 <FaDumbbell className="text-yellow-400 text-4xl mx-auto mb-4 opacity-60" />
                 <p className="text-gray-300 text-xl mb-2">No workouts available yet</p>
-                <p className="text-gray-400">Be the first to add one!</p>
-                <motion.button
-                  onClick={() => setIsModalOpen(true)}
-                  className="mt-4 px-4 py-2 bg-yellow-500 text-gray-900 rounded-lg font-medium"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Add a workout
-                </motion.button>
               </div>
             )}
           </motion.div>

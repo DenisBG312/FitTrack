@@ -8,6 +8,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
+using StrongerTogether.Server.DTOs.User;
 
 namespace StrongerTogether.Server.Controllers
 {
@@ -167,30 +168,5 @@ namespace StrongerTogether.Server.Controllers
 
             return Ok(new { message = "Logged out successfully" });
         }
-    }
-
-    public class LoginRequest
-    {
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
-
-    public class RegisterRequest
-    {
-        [Required]
-        [StringLength(256)]
-        public string Email { get; set; }
-        [Required]
-        [StringLength(256)]
-        public string Password { get; set; }
-        [Required]
-        [StringLength(100)]
-        public string Username { get; set; }
-        [Required]
-        public decimal Height { get; set; }
-        [Required]
-        public decimal Weight { get; set; }
-        [Required]
-        public IFormFile ProfileImage { get; set; } = null!;
     }
 }

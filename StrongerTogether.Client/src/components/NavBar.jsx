@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AiOutlineHome, AiOutlineLogin, AiOutlineUserAdd } from "react-icons/ai";
-import { FaUser, FaSignOutAlt, FaDumbbell } from "react-icons/fa";
+import { FaUser, FaSignOutAlt, FaDumbbell, FaAppleAlt } from "react-icons/fa";
 
 const NavBar = ({ isAuthenticated, username, handleLogout }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -20,7 +20,6 @@ const NavBar = ({ isAuthenticated, username, handleLogout }) => {
     <nav className={`${scrolled ? "bg-gray-900 shadow-lg" : "bg-gradient-to-r from-gray-900 to-gray-800"} text-white fixed top-0 left-0 z-50 w-full transition-all duration-300 ${scrolled ? "h-16" : "h-20"}`}>
       <div className="container mx-auto px-6 h-full flex justify-between items-center">
 
-        {/* Logo with Animation */}
         <Link
           to="/"
           className="text-2xl font-bold flex items-center gap-2 transition-all duration-300 transform hover:scale-105"
@@ -49,6 +48,17 @@ const NavBar = ({ isAuthenticated, username, handleLogout }) => {
             >
               <FaDumbbell size={20} className="text-yellow-500 group-hover:animate-pulse" />
               <span>Workouts</span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-500 transition-all duration-300 group-hover:w-full"></span>
+            </Link>
+          )}
+
+          {isAuthenticated && (
+            <Link
+              to="/nutritions"
+              className="relative group flex items-center gap-2 font-medium text-gray-200 hover:text-white"
+            >
+              <FaAppleAlt size={20} className="text-yellow-500 group-hover:animate-pulse" />
+              <span>Nutrition</span>
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
           )}
@@ -97,7 +107,6 @@ const NavBar = ({ isAuthenticated, username, handleLogout }) => {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="md:hidden flex items-center px-3 py-2 rounded-lg bg-gray-800 hover:bg-yellow-500 text-yellow-500 hover:text-gray-900 transition-colors duration-300"
@@ -113,7 +122,6 @@ const NavBar = ({ isAuthenticated, username, handleLogout }) => {
         </button>
       </div>
 
-      {/* Mobile Navigation */}
       <div
         className={`md:hidden transition-all duration-300 overflow-hidden ${mobileMenuOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
           }`}
@@ -134,6 +142,17 @@ const NavBar = ({ isAuthenticated, username, handleLogout }) => {
               onClick={() => setMobileMenuOpen(false)}
             >
               <FaDumbbell size={20} className="text-yellow-500" /> Workouts
+            </Link>
+          )}
+
+          {isAuthenticated && (
+            <Link
+              to="/nutritions"
+              className="relative group flex items-center gap-2 font-medium text-gray-200 hover:text-white"
+            >
+              <FaAppleAlt size={20} className="text-yellow-500 group-hover:animate-pulse" />
+              <span>Nutrition</span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
           )}
 

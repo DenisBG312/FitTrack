@@ -235,7 +235,7 @@ const featuresData = [
     title: "Workout Tracking",
     description:
       "Log and track your workouts with ease. Monitor sets, reps, weights, and rest periods to optimize your training.",
-    link: "/features/tracking",
+    link: "/workouts",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
