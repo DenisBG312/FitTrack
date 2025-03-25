@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AddNutritionLog from './AddNutritionLog';
+import LoadingSpinner from "../LoadingSpinner";
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from "framer-motion";
+import { format, parseISO, isSameDay } from "date-fns";
 
 const Nutrition = () => {
   const [nutritionLogs, setNutritionLogs] = useState([]);
@@ -9,6 +13,8 @@ const Nutrition = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [selectedDate, setSelectedDate] = useState("");
 
   const fetchNutritionLogs = async () => {
     try {
@@ -37,45 +43,31 @@ const Nutrition = () => {
     setShowAddModal(!showAddModal);
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
   };
 
   const getMealTypeIcon = (mealType) => {
     switch (mealType) {
       case "Breakfast":
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 2a6 6 0 100 12A6 6 0 0010 4z" clipRule="evenodd" />
-          </svg>
-        );
+        return <span className="text-yellow-400 mr-1">🍳</span>;
       case "Lunch":
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-            <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-          </svg>
-        );
+        return <span className="text-green-400 mr-1">🥪</span>;
       case "Dinner":
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V5z" clipRule="evenodd" />
-          </svg>
-        );
+        return <span className="text-blue-400 mr-1">🍲</span>;
+      case "Snack":
+        return <span className="text-purple-400 mr-1">🍎</span>;
       default:
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-400" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-          </svg>
-        );
+        return <span className="text-gray-400 mr-1">🍽️</span>;
     }
   };
-
 
   const calculateTotalNutrition = () => {
     return nutritionLogs.reduce(
       (totals, log) => {
+        const logDate = format(parseISO(log.date), 'yyyy-MM-dd');
+        if (selectedDate && logDate !== selectedDate) return totals;
+        
         return {
           calories: totals.calories + log.calories,
           protein: totals.protein + log.protein,
@@ -87,19 +79,27 @@ const Nutrition = () => {
     );
   };
 
-  const filteredLogs = nutritionLogs.filter((log) => {
-    const matchesTab = activeTab === "all" || log.mealType.toLowerCase() === activeTab.toLowerCase();
-    const matchesSearch = log.foodName.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesTab && matchesSearch;
-  });
+  const filteredLogs = nutritionLogs
+    .filter((log) => {
+      const matchesTab = activeTab === "all" || log.mealType.toLowerCase() === activeTab.toLowerCase();
+      const matchesSearch = log.foodName.toLowerCase().includes(searchTerm.toLowerCase());
+      const logDate = format(parseISO(log.date), 'yyyy-MM-dd');
+      const matchesDate = !selectedDate || logDate === selectedDate;
+      return matchesTab && matchesSearch && matchesDate;
+    })
+    .sort((a, b) => {
+      const dateA = parseISO(a.date);
+      const dateB = parseISO(b.date);
+      return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+    });
 
   const totals = calculateTotalNutrition();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
         <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500"></div>
+          <LoadingSpinner />
           <p className="mt-4 text-yellow-500 font-medium">Loading your nutrition data...</p>
         </div>
       </div>
@@ -108,11 +108,14 @@ const Nutrition = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="bg-red-900 text-white p-6 rounded-lg shadow-xl max-w-md mx-auto">
-          <h2 className="text-xl font-bold mb-2">Error</h2>
-          <p>{error}</p>
-          <button className="mt-4 bg-red-700 hover:bg-red-600 text-white py-2 px-4 rounded transition-colors duration-300">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
+        <div className="bg-red-900 text-white p-8 rounded-2xl shadow-2xl max-w-md text-center">
+          <h2 className="text-2xl font-bold mb-4">Oops! Something went wrong</h2>
+          <p className="mb-6">{error}</p>
+          <button 
+            className="bg-red-600 hover:bg-red-500 text-white py-2 px-6 rounded-full transition-colors duration-300"
+            onClick={fetchNutritionLogs}
+          >
             Try Again
           </button>
         </div>
@@ -120,220 +123,247 @@ const Nutrition = () => {
     );
   }
 
+  const groupedLogs = filteredLogs.reduce((acc, log) => {
+    const dateKey = format(parseISO(log.date), 'yyyy-MM-dd');
+    if (!acc[dateKey]) {
+      acc[dateKey] = [];
+    }
+    acc[dateKey].push(log);
+    return acc;
+  }, {});
+
+  const sortedDates = Object.keys(groupedLogs).sort((a, b) => {
+    return sortOrder === "asc" 
+      ? new Date(a) - new Date(b) 
+      : new Date(b) - new Date(a);
+  });
+
   return (
-    <div className="min-h-screen bg-gray-900 p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-yellow-500 mb-2">Nutrition Journal</h1>
-            <p className="text-gray-400">Track your daily nutrition intake and macros</p>
-          </div>
-          <div className="mt-4 md:mt-0">
-            <button
-              onClick={toggleAddModal}
-              className="bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-semibold py-2 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105"
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-12 text-center"
+        >
+          <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500 mb-3">
+            Nutrition Tracker
+          </h1>
+          <p className="text-gray-400 max-w-xl mx-auto">
+            Track your daily nutrition with precision and insight
+          </p>
+        </motion.div>
+
+        <div className="flex justify-center mb-8">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={toggleAddModal}
+            className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-3 px-6 rounded-full shadow-2xl hover:shadow-yellow-500/50 transition-all duration-300"
+          >
+            + Add New Entry
+          </motion.button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+          {[
+            { label: "Calories", value: totals.calories, icon: "🔥", color: "from-yellow-500 to-orange-500" },
+            { label: "Protein", value: `${totals.protein}g`, icon: "💪", color: "from-green-500 to-teal-500" },
+            { label: "Carbs", value: `${totals.carbs}g`, icon: "🍞", color: "from-blue-500 to-indigo-500" },
+            { label: "Fats", value: `${totals.fats}g`, icon: "🧈", color: "from-purple-500 to-pink-500" }
+          ].map((stat, index) => (
+            <motion.div 
+              key={stat.label}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.2, duration: 0.5 }}
+              className={`bg-gradient-to-br ${stat.color} p-6 rounded-2xl shadow-2xl backdrop-blur-lg bg-opacity-30 hover:scale-105 transition-transform`}
             >
-              Add New Entry
-            </button>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-white/70 uppercase tracking-wider">{stat.label}</p>
+                  <p className="text-3xl font-bold">{stat.value}</p>
+                </div>
+                <span className="text-4xl opacity-70">{stat.icon}</span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 mb-12 border border-white/10">
+          <div className="flex flex-wrap gap-4 justify-between items-center">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="pl-4 pr-2 py-2 bg-gray-700 rounded-full focus:ring-2 focus:ring-yellow-500 transition-all"
+                />
+                {selectedDate && (
+                  <button
+                    onClick={() => setSelectedDate("")}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-yellow-500"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+              <span className="text-gray-400 text-sm">Filter by date</span>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {["All", "Breakfast", "Lunch", "Dinner", "Snack"].map((tab) => (
+                <motion.button
+                  key={tab}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setActiveTab(tab.toLowerCase())}
+                  className={`px-4 py-2 rounded-full transition-all duration-300 ${
+                    activeTab === tab.toLowerCase() 
+                      ? "bg-gradient-to-r from-yellow-500 to-orange-500 text-white" 
+                      : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                  }`}
+                >
+                  {tab}
+                </motion.button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search foods..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 pr-4 py-2 w-64 bg-gray-700 rounded-full focus:ring-2 focus:ring-yellow-500 transition-all"
+                />
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <button
+                onClick={toggleSortOrder}
+                className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-500 transition-colors"
+              >
+                {sortOrder === "desc" ? "Newest First" : "Oldest First"}
+              </button>
+            </div>
           </div>
         </div>
 
-        {showAddModal && (
-          <AddNutritionLog
-            onClose={() => setShowAddModal(false)}
-            onLogAdded={handleAddNutritionLog}
-          />
+        {sortedDates.length === 0 ? (
+          <div className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-8 text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 className="text-xl font-medium text-gray-300 mb-2">
+              {selectedDate ? `No entries for ${format(new Date(selectedDate), 'MMM do, yyyy')}` : 'No nutrition logs found'}
+            </h3>
+            <p className="text-gray-500">Try changing your filters or add a new log entry</p>
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {sortedDates.map((dateKey) => {
+              const date = parseISO(dateKey);
+              const logsForDate = groupedLogs[dateKey];
+              const isToday = isSameDay(date, new Date());
+
+              return (
+                <motion.div
+                  key={dateKey}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="bg-gray-800/50 backdrop-blur-lg rounded-2xl overflow-hidden border border-white/10"
+                >
+                  <div className={`p-4 ${isToday ? 'bg-gradient-to-r from-yellow-500 to-orange-500 bg-opacity-20' : 'bg-gray-700'}`}>
+                    <div className="flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <h3 className="text-lg font-semibold text-white">
+                        {format(date, "EEEE, MMMM do yyyy")}
+                        {isToday && (
+                          <span className="ml-2 bg-white text-orange-500 text-xs font-bold px-2 py-0.5 rounded-full">
+                            Today
+                          </span>
+                        )}
+                      </h3>
+                    </div>
+                  </div>
+
+                  <div className="divide-y divide-gray-700">
+                    {logsForDate.map((log) => (
+                      <div key={log.id} className="p-4 hover:bg-gray-700/50 transition-colors duration-200">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center mb-1">
+                              {getMealTypeIcon(log.mealType)}
+                              <span className="ml-2 font-medium text-white">{log.foodName}</span>
+                              <span className="ml-2 text-xs bg-gray-700 text-gray-300 px-2 py-0.5 rounded-full">
+                                {log.mealType}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+                            {[
+                              { label: "Calories", value: log.calories, color: "text-yellow-400" },
+                              { label: "Protein", value: `${log.protein}g`, color: "text-green-400" },
+                              { label: "Carbs", value: `${log.carbs}g`, color: "text-blue-400" },
+                              { label: "Fats", value: `${log.fats}g`, color: "text-purple-400" }
+                            ].map((nutrient) => (
+                              <div key={nutrient.label} className="text-center">
+                                <p className="text-xs text-gray-400">{nutrient.label}</p>
+                                <p className={`font-bold ${nutrient.color}`}>{nutrient.value}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gray-800 rounded-lg shadow-lg p-4 border-l-4 border-yellow-500">
-            <div className="flex items-center">
-              <div className="p-2 bg-yellow-500 bg-opacity-20 rounded">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-gray-400 text-sm">Total Calories</p>
-                <p className="text-2xl font-bold text-white">{totals.calories}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-800 rounded-lg shadow-lg p-4 border-l-4 border-green-500">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-500 bg-opacity-20 rounded">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-gray-400 text-sm">Protein</p>
-                <p className="text-2xl font-bold text-white">{totals.protein}g</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-800 rounded-lg shadow-lg p-4 border-l-4 border-blue-500">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-500 bg-opacity-20 rounded">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-gray-400 text-sm">Carbs</p>
-                <p className="text-2xl font-bold text-white">{totals.carbs}g</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-800 rounded-lg shadow-lg p-4 border-l-4 border-purple-500">
-            <div className="flex items-center">
-              <div className="p-2 bg-purple-500 bg-opacity-20 rounded">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-gray-400 text-sm">Fats</p>
-                <p className="text-2xl font-bold text-white">{totals.fats}g</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gray-800 rounded-lg shadow-lg p-4 mb-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="flex space-x-2 mb-4 md:mb-0">
-              <button
-                onClick={() => setActiveTab("all")}
-                className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
-                  activeTab === "all"
-                    ? "bg-yellow-500 text-gray-900 font-medium"
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                }`}
+        <AnimatePresence>
+          {showAddModal && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+              onClick={() => setShowAddModal(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.95, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl relative max-h-[90vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}
               >
-                All
-              </button>
-              <button
-                onClick={() => setActiveTab("breakfast")}
-                className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
-                  activeTab === "breakfast"
-                    ? "bg-yellow-500 text-gray-900 font-medium"
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                }`}
-              >
-                Breakfast
-              </button>
-              <button
-                onClick={() => setActiveTab("lunch")}
-                className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
-                  activeTab === "lunch"
-                    ? "bg-yellow-500 text-gray-900 font-medium"
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                }`}
-              >
-                Lunch
-              </button>
-              <button
-                onClick={() => setActiveTab("dinner")}
-                className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
-                  activeTab === "dinner"
-                    ? "bg-yellow-500 text-gray-900 font-medium"
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                }`}
-              >
-                Dinner
-              </button>
-            </div>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search food..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-gray-700 text-white px-4 py-2 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 w-full md:w-64"
-              />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-gray-400 absolute left-3 top-2.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          {filteredLogs.length === 0 ? (
-            <div className="bg-gray-800 rounded-lg shadow-lg p-8 text-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <h3 className="text-xl font-medium text-gray-300 mb-2">No nutrition logs found</h3>
-              <p className="text-gray-500">Try changing your filters or add a new log entry</p>
-            </div>
-          ) : (
-            filteredLogs.map((log) => (
-              <div key={log.id} className="bg-gray-800 rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:scale-102">
-                <div className="flex flex-col md:flex-row">
-                  <div className="md:w-1/4 bg-gradient-to-br from-yellow-600 to-yellow-400 p-6 flex flex-col justify-center items-center text-gray-900">
-                    <div className="text-3xl font-bold">{formatDate(log.date)}</div>
-                    <div className="flex items-center mt-2">
-                      {getMealTypeIcon(log.mealType)}
-                      <span className="ml-2 font-semibold">{log.mealType}</span>
-                    </div>
-                  </div>
-                  <div className="md:w-3/4 p-6">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
-                      <h3 className="text-xl font-bold text-white mb-2 md:mb-0">{log.foodName}</h3>
-                      <div className="flex space-x-2">
-                        <button className="text-blue-400 hover:text-blue-300 transition-colors duration-200">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                          </svg>
-                        </button>
-                        <button className="text-red-400 hover:text-red-300 transition-colors duration-200">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="bg-gray-700 rounded-lg p-3">
-                        <p className="text-yellow-400 text-sm mb-1">Calories</p>
-                        <p className="text-xl font-bold text-white">{log.calories}</p>
-                      </div>
-                      <div className="bg-gray-700 rounded-lg p-3">
-                        <p className="text-green-400 text-sm mb-1">Protein</p>
-                        <p className="text-xl font-bold text-white">{log.protein}g</p>
-                      </div>
-                      <div className="bg-gray-700 rounded-lg p-3">
-                        <p className="text-blue-400 text-sm mb-1">Carbs</p>
-                        <p className="text-xl font-bold text-white">{log.carbs}g</p>
-                      </div>
-                      <div className="bg-gray-700 rounded-lg p-3">
-                        <p className="text-purple-400 text-sm mb-1">Fats</p>
-                        <p className="text-xl font-bold text-white">{log.fats}g</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center mt-4 text-gray-400 text-sm">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                      {log.user.username}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))
+                <button
+                  onClick={() => setShowAddModal(false)}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-yellow-500 transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+                <AddNutritionLog
+                  onClose={() => setShowAddModal(false)}
+                  onLogAdded={handleAddNutritionLog}
+                />
+              </motion.div>
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </div>
     </div>
   );
