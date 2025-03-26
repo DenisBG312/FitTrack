@@ -39,6 +39,20 @@ const Workouts = () => {
     videoUrl: "",
   });
 
+  // Disable scrolling when either modal is open
+  useEffect(() => {
+    if (isModalOpen || isEditModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup function to reset overflow when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isModalOpen, isEditModalOpen]);
+
   const fetchWorkouts = async () => {
     setIsLoading(true);
     try {
@@ -119,7 +133,6 @@ const Workouts = () => {
         { withCredentials: true }
       );
 
-      // Update the workout in the local state to avoid refreshing
       setWorkouts((prevWorkouts) =>
         prevWorkouts.map((workout) =>
           workout.id === editedWorkout.id ? editedWorkout : workout
@@ -164,7 +177,7 @@ const Workouts = () => {
   const filteredWorkouts = workouts.filter((workout) => {
     const matchesSearch = searchTerm
       ? workout.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      workout.description.toLowerCase().includes(searchTerm.toLowerCase())
+        workout.description.toLowerCase().includes(searchTerm.toLowerCase())
       : true;
 
     const matchesDifficulty = filterDifficulty
