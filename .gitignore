@@ -1,0 +1,19 @@
+# VS Code settings and workspace files
+.vs/
+*.suo
+*.db
+
+# Temporary and cache files
+*.cache
+*.bak
+*.backup
+*.log
+
+# Database-related temporary files
+*.db-wal
+*.db-shm
+*.db-journal
+*.dbcache*
+
+# JSON backups
+*.backup.json
