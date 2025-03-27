@@ -104,7 +104,7 @@ namespace StrongerTogether.Server.Controllers
 
             if (userId == null) return Unauthorized();
 
-            var baseUrl = $"{Request.Scheme}://{Request.Host.Value}"; // Get full base URL
+            var baseUrl = $"{Request.Scheme}://{Request.Host.Value}";
 
             var user = await _context.Users
                 .Select(u => new
@@ -123,6 +123,66 @@ namespace StrongerTogether.Server.Controllers
             if (user == null) return NotFound(new { message = "User not found" });
 
             return Ok(user);
+        }
+
+        [Authorize]
+        [HttpPut("edit")]
+        public async Task<IActionResult> EditProfile([FromForm] EditUserRequest request)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "User ID not found in token." });
+            }
+
+            var user = await _context.Users.FindAsync(Guid.Parse(userId));
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found." });
+            }
+
+            user.Username = request.Username;
+
+            if (request.Height.HasValue)
+            {
+                user.Height = request.Height.Value;
+            }
+            if (request.Weight.HasValue)
+            {
+                user.Weight = request.Weight.Value;
+            }
+
+            if (request.ProfileImage != null)
+            {
+                var fileExtension = Path.GetExtension(request.ProfileImage.FileName);
+                var fileName = Guid.NewGuid() + fileExtension;
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
+
+                if (!Directory.Exists(Path.GetDirectoryName(filePath)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                }
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await request.ProfileImage.CopyToAsync(fileStream);
+                }
+
+                if (!string.IsNullOrEmpty(user.ProfileImageUrl))
+                {
+                    var oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.ProfileImageUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+
+                user.ProfileImageUrl = "/uploads/" + fileName;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Profile updated successfully!" });
         }
 
         private string GenerateJwtToken(User user)

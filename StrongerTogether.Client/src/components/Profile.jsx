@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { profile } from "../services/authService";
+import EditProfileModal from "./EditProfileModal";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -40,21 +41,28 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [imageError, setImageError] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const fetchProfile = async () => {
+    setLoading(true);
+    try {
+      const response = await profile();
+      setUserData(response.data);
+    } catch (error) {
+      setError("Failed to fetch profile data.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await profile();
-        setUserData(response.data);
-      } catch (error) {
-        setError("Failed to fetch profile data.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProfile();
   }, []);
+
+  const handleClose = () => setIsModalOpen(false);
+  const handleUpdate = () => {
+    fetchProfile();
+  };
 
   const handleImageError = () => {
     setImageError(true);
@@ -249,6 +257,7 @@ const Profile = () => {
                   className="rounded-lg bg-yellow-500 px-4 py-2 font-medium text-gray-900 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-gray-800"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsModalOpen(true)}
                 >
                   Edit Profile
                 </motion.button>
@@ -496,6 +505,13 @@ const Profile = () => {
           </div>
         </motion.div>
       </div>
+
+      <EditProfileModal
+        isOpen={isModalOpen}
+        onClose={handleClose}
+        userData={userData}
+        onUpdate={handleUpdate}
+      />
     </motion.div>
   );
 };

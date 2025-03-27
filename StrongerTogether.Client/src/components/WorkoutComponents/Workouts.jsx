@@ -17,6 +17,7 @@ const Workouts = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [userRole, setUserRole] = useState('');
   const [editedWorkout, setEditedWorkout] = useState({
     id: "",
     title: "",
@@ -39,7 +40,6 @@ const Workouts = () => {
     videoUrl: "",
   });
 
-  // Disable scrolling when either modal is open
   useEffect(() => {
     if (isModalOpen || isEditModalOpen) {
       document.body.style.overflow = 'hidden';
@@ -47,7 +47,6 @@ const Workouts = () => {
       document.body.style.overflow = 'unset';
     }
 
-    // Cleanup function to reset overflow when component unmounts
     return () => {
       document.body.style.overflow = 'unset';
     };
@@ -73,6 +72,7 @@ const Workouts = () => {
           withCredentials: true,
         });
         setUserId(response.data.id);
+        setUserRole(response.data.role);
       } catch (error) {
         console.error("Error fetching user ID:", error);
       }
@@ -177,7 +177,7 @@ const Workouts = () => {
   const filteredWorkouts = workouts.filter((workout) => {
     const matchesSearch = searchTerm
       ? workout.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        workout.description.toLowerCase().includes(searchTerm.toLowerCase())
+      workout.description.toLowerCase().includes(searchTerm.toLowerCase())
       : true;
 
     const matchesDifficulty = filterDifficulty
@@ -247,19 +247,21 @@ const Workouts = () => {
               Community Workouts
             </motion.h1>
           </div>
-          <motion.button
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center bg-gradient-to-r from-yellow-500 to-yellow-600 text-gray-900 px-6 py-3 rounded-lg font-bold shadow-lg hover:shadow-xl"
-            whileHover={{
-              scale: 1.05,
-              backgroundColor: "#fbbf24",
-              boxShadow: "0 0 20px rgba(251, 191, 36, 0.5)",
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <FaPlus className="mr-2" />
-            Add Workout
-          </motion.button>
+          {(userRole === 'Admin' || userRole === 'Coach') && (
+            <motion.button
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center bg-gradient-to-r from-yellow-500 to-yellow-600 text-gray-900 px-6 py-3 rounded-lg font-bold shadow-lg hover:shadow-xl"
+              whileHover={{
+                scale: 1.05,
+                backgroundColor: "#fbbf24",
+                boxShadow: "0 0 20px rgba(251, 191, 36, 0.5)",
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <FaPlus className="mr-2" />
+              Add Workout
+            </motion.button>
+          )}
         </div>
 
         <WorkoutFilters

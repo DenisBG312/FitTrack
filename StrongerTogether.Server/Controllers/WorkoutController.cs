@@ -119,7 +119,7 @@ namespace StrongerTogether.Server.Controllers
 
             try
             {
-                tokenHandler.ValidateToken(jwtCookie, new TokenValidationParameters
+                var principal = tokenHandler.ValidateToken(jwtCookie, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
@@ -128,8 +128,13 @@ namespace StrongerTogether.Server.Controllers
                     ClockSkew = TimeSpan.Zero
                 }, out SecurityToken validatedToken);
 
-                var parsedToken = (JwtSecurityToken)validatedToken;
-                var userId = parsedToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                var roleClaim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+                if (roleClaim == null || (!roleClaim.Value.Equals("Admin") && !roleClaim.Value.Equals("Coach")))
+                {
+                    return Forbid("User does not have permission to create workouts");
+                }
+
+                var userId = principal.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
 
                 var workout = new Workout
                 {

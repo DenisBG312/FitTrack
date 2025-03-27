@@ -6,8 +6,8 @@ import { FaUser, FaSignOutAlt, FaDumbbell, FaAppleAlt } from "react-icons/fa";
 const NavBar = ({ isAuthenticated, username, handleLogout }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [currentUsername, setCurrentUsername] = useState(username);
 
-  // Add scroll effect
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -15,6 +15,10 @@ const NavBar = ({ isAuthenticated, username, handleLogout }) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    setCurrentUsername(username);
+  }, [username]);
 
   return (
     <nav className={`${scrolled ? "bg-gray-900 shadow-lg" : "bg-gradient-to-r from-gray-900 to-gray-800"} text-white fixed top-0 left-0 z-50 w-full transition-all duration-300 ${scrolled ? "h-16" : "h-20"}`}>
