@@ -11,6 +11,7 @@ import Workouts from "./components/WorkoutComponents/Workouts";
 import WorkoutDetails from "./components/WorkoutComponents/WorkoutDetails";
 import Nutritions from "./components/NutritionComponents/Nutritions";
 import SocialFeed from "./components/SocialFeed";
+import PostDetails from "./components/PostDetails";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -55,6 +56,7 @@ const App = () => {
         <Route path="/workouts/:id" element={<WorkoutDetails />} />
         <Route path="/community" element={<SocialFeed />} />
         <Route path="/nutritions" element={<ProtectedRoute element={<Nutritions />} />} />
+        <Route path="/posts/:postId" element={<PostDetails />} />
       </Routes>
     </div>
   );

@@ -129,7 +129,9 @@ const SocialFeed = () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-    const handleLike = (postId) => {
+    const handleLike = (postId, e) => {
+        e.preventDefault();
+        e.stopPropagation();
         setPosts(posts.map(post => {
             if (post.id === postId) {
                 const alreadyLiked = post.likes.some(like => like.userId === currentUser?.id);
@@ -150,7 +152,8 @@ const SocialFeed = () => {
         }));
     };
 
-    const handleBookmark = (postId) => {
+    const handleBookmark = (postId, e) => {
+        e.stopPropagation();
         if (bookmarkedPosts.includes(postId)) {
             setBookmarkedPosts(bookmarkedPosts.filter(id => id !== postId));
         } else {
@@ -398,80 +401,153 @@ const SocialFeed = () => {
                                     key={post.id}
                                     variants={itemVariants}
                                     layoutId={`post-${post.id}`}
-                                    className="bg-gray-800/90 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden border border-gray-700/50"
+                                    className="bg-gray-800/90 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden border border-gray-700/50 hover:shadow-yellow-500/20 transition-shadow duration-300"
                                     style={{
                                         boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.2)"
                                     }}
                                 >
-                                    <div className="p-5 sm:p-6">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <Link
-                                                to={`/profile/${post.user?.id || "unknown"}`}
-                                                className="flex items-center gap-3 group"
-                                            >
-                                                <motion.div
-                                                    whileHover={{ scale: 1.1 }}
-                                                    className="relative"
+                                    <Link to={`/posts/${post.id}`} className="block">
+                                        <div className="p-5 sm:p-6">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <Link
+                                                    to={`/profile/${post.user?.id || "unknown"}`}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="flex items-center gap-3 group"
                                                 >
-                                                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-full blur-sm opacity-50 group-hover:opacity-80 transition-opacity duration-300"></div>
+                                                    <motion.div
+                                                        whileHover={{ scale: 1.1 }}
+                                                        className="relative"
+                                                    >
+                                                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-full blur-sm opacity-50 group-hover:opacity-80 transition-opacity duration-300"></div>
+                                                        <img
+                                                            src={post.user?.profileImageUrl || "/default-avatar.png"}
+                                                            alt={post.user?.username || "Unknown User"}
+                                                            className="relative h-12 w-12 rounded-full object-cover border-2 border-yellow-600 ring-2 ring-gray-800 z-10"
+                                                        />
+                                                    </motion.div>
+                                                    <div>
+                                                        <p className="font-semibold group-hover:text-yellow-500 transition-colors duration-300">
+                                                            {post.user?.username || "Unknown User"}
+                                                        </p>
+                                                        <p className="text-gray-400 text-xs">
+                                                            {moment(post.createdAt).fromNow()}
+                                                        </p>
+                                                    </div>
+                                                </Link>
+
+                                                <button
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="text-gray-400 hover:text-gray-200 transition-colors duration-300 relative group"
+                                                >
+                                                    <EllipsisHorizontalIcon className="h-6 w-6" />
+                                                    <span className="absolute right-0 mt-2 py-1 px-2 bg-gray-700 text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 invisible group-hover:visible whitespace-nowrap">
+                                                        More options
+                                                    </span>
+                                                </button>
+                                            </div>
+
+                                            <div className="mb-4">
+                                                <h3 className="text-xl font-bold mb-2 text-gray-100">{post.title}</h3>
+                                                <p className="text-gray-300 whitespace-pre-line leading-relaxed">{post.content}</p>
+                                            </div>
+
+                                            {post.imageUrl && (
+                                                <motion.div
+                                                    className="mb-4 -mx-6 relative overflow-hidden"
+                                                    whileHover={{ scale: 1.01 }}
+                                                    transition={{ duration: 0.3 }}
+                                                >
                                                     <img
-                                                        src={post.user?.profileImageUrl || "/default-avatar.png"}
-                                                        alt={post.user?.username || "Unknown User"}
-                                                        className="relative h-12 w-12 rounded-full object-cover border-2 border-yellow-600 ring-2 ring-gray-800 z-10"
+                                                        src={post.imageUrl}
+                                                        alt="Post content"
+                                                        className="w-full h-96 object-cover transform hover:scale-[1.02] transition-transform duration-700 ease-out"
+                                                        loading="lazy"
                                                     />
+                                                    <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-gray-900 to-transparent opacity-70"></div>
                                                 </motion.div>
-                                                <div>
-                                                    <p className="font-semibold group-hover:text-yellow-500 transition-colors duration-300">
-                                                        {post.user?.username || "Unknown User"}
-                                                    </p>
-                                                    <p className="text-gray-400 text-xs">
-                                                        {moment(post.createdAt).fromNow()}
-                                                    </p>
-                                                </div>
-                                            </Link>
+                                            )}
 
-                                            <button className="text-gray-400 hover:text-gray-200 transition-colors duration-300 relative group">
-                                                <EllipsisHorizontalIcon className="h-6 w-6" />
-                                                <span className="absolute right-0 mt-2 py-1 px-2 bg-gray-700 text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 invisible group-hover:visible whitespace-nowrap">
-                                                    More options
-                                                </span>
-                                            </button>
-                                        </div>
+                                            {(post.workout || post.nutritionLog) && (
+                                                <motion.div
+                                                    whileHover={{ scale: 1.02, y: -2 }}
+                                                    initial={{ y: 8, opacity: 0 }}
+                                                    animate={{ y: 0, opacity: 1 }}
+                                                    transition={{ delay: 0.2 + (index * 0.05), duration: 0.4, type: "spring", stiffness: 300 }}
+                                                    className="bg-gradient-to-tr from-gray-800 to-gray-700 border border-gray-600/50 rounded-lg p-4 mb-4 backdrop-blur-sm shadow-lg"
+                                                >
+                                                    {post.workout && post.nutritionLog ? (
+                                                        <div className="space-y-4">
+                                                            <div className="flex items-start">
+                                                                <div className="flex-shrink-0 bg-yellow-500/20 p-2 rounded-lg mr-3">
+                                                                    <motion.span
+                                                                        className="text-xl"
+                                                                        animate={{
+                                                                            scale: [1, 1.2, 1],
+                                                                            rotate: [0, 5, -5, 0]
+                                                                        }}
+                                                                        transition={{
+                                                                            duration: 2,
+                                                                            repeat: Infinity,
+                                                                            repeatDelay: 4
+                                                                        }}
+                                                                    >
+                                                                        🏋️
+                                                                    </motion.span>
+                                                                </div>
+                                                                <div className="flex-1">
+                                                                    <motion.h4
+                                                                        className="font-semibold text-yellow-500 mb-1"
+                                                                        style={{
+                                                                            background: "linear-gradient(90deg, #eab308 0%, #f59e0b 100%)",
+                                                                            backgroundClip: "text",
+                                                                            WebkitBackgroundClip: "text",
+                                                                            WebkitTextFillColor: "transparent"
+                                                                        }}
+                                                                    >
+                                                                        Linked Workout
+                                                                    </motion.h4>
+                                                                    <p className="text-sm text-gray-200 font-medium">
+                                                                        {post.workout.title} · {post.workout.duration} mins
+                                                                    </p>
+                                                                </div>
+                                                            </div>
 
-                                        <div className="mb-4">
-                                            <h3 className="text-xl font-bold mb-2 text-gray-100">{post.title}</h3>
-                                            <p className="text-gray-300 whitespace-pre-line leading-relaxed">{post.content}</p>
-                                        </div>
-
-                                        {post.imageUrl && (
-                                            <motion.div
-                                                className="mb-4 -mx-6 relative overflow-hidden"
-                                                whileHover={{ scale: 1.01 }}
-                                                transition={{ duration: 0.3 }}
-                                            >
-                                                <img
-                                                    src={post.imageUrl}
-                                                    alt="Post content"
-                                                    className="w-full h-96 object-cover transform hover:scale-[1.02] transition-transform duration-700 ease-out"
-                                                    loading="lazy"
-                                                />
-                                                {/* Beautiful gradient overlay for better text visibility */}
-                                                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-gray-900 to-transparent opacity-70"></div>
-                                            </motion.div>
-                                        )}
-
-                                        {(post.workout || post.nutritionLog) && (
-                                            <motion.div
-                                                whileHover={{ scale: 1.02, y: -2 }}
-                                                initial={{ y: 8, opacity: 0 }}
-                                                animate={{ y: 0, opacity: 1 }}
-                                                transition={{ delay: 0.2 + (index * 0.05), duration: 0.4, type: "spring", stiffness: 300 }}
-                                                className="bg-gradient-to-tr from-gray-800 to-gray-700 border border-gray-600/50 rounded-lg p-4 mb-4 backdrop-blur-sm shadow-lg"
-                                            >
-                                                {/* Both workout and nutrition log exist */}
-                                                {post.workout && post.nutritionLog ? (
-                                                    <div className="space-y-4">
-                                                        {/* Workout Section */}
+                                                            <div className="flex items-start">
+                                                                <div className="flex-shrink-0 bg-green-500/20 p-2 rounded-lg mr-3">
+                                                                    <motion.span
+                                                                        className="text-xl"
+                                                                        animate={{
+                                                                            scale: [1, 1.1, 1],
+                                                                            rotate: [0, 2, -2, 0]
+                                                                        }}
+                                                                        transition={{
+                                                                            duration: 2,
+                                                                            repeat: Infinity,
+                                                                            repeatDelay: 4
+                                                                        }}
+                                                                    >
+                                                                        🥗
+                                                                    </motion.span>
+                                                                </div>
+                                                                <div className="flex-1">
+                                                                    <motion.h4
+                                                                        className="font-semibold text-green-500 mb-1"
+                                                                        style={{
+                                                                            background: "linear-gradient(90deg, #22c55e 0%, #16a34a 100%)",
+                                                                            backgroundClip: "text",
+                                                                            WebkitBackgroundClip: "text",
+                                                                            WebkitTextFillColor: "transparent"
+                                                                        }}
+                                                                    >
+                                                                        Linked Nutrition
+                                                                    </motion.h4>
+                                                                    <p className="text-sm text-gray-200 font-medium">
+                                                                        {post.nutritionLog.foodName} · {post.nutritionLog.calories} kcal
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ) : post.workout ? (
                                                         <div className="flex items-start">
                                                             <div className="flex-shrink-0 bg-yellow-500/20 p-2 rounded-lg mr-3">
                                                                 <motion.span
@@ -489,7 +565,7 @@ const SocialFeed = () => {
                                                                     🏋️
                                                                 </motion.span>
                                                             </div>
-                                                            <div className="flex-1">
+                                                            <div>
                                                                 <motion.h4
                                                                     className="font-semibold text-yellow-500 mb-1"
                                                                     style={{
@@ -506,8 +582,7 @@ const SocialFeed = () => {
                                                                 </p>
                                                             </div>
                                                         </div>
-
-                                                        {/* Nutrition Log Section */}
+                                                    ) : (
                                                         <div className="flex items-start">
                                                             <div className="flex-shrink-0 bg-green-500/20 p-2 rounded-lg mr-3">
                                                                 <motion.span
@@ -525,7 +600,7 @@ const SocialFeed = () => {
                                                                     🥗
                                                                 </motion.span>
                                                             </div>
-                                                            <div className="flex-1">
+                                                            <div>
                                                                 <motion.h4
                                                                     className="font-semibold text-green-500 mb-1"
                                                                     style={{
@@ -542,153 +617,82 @@ const SocialFeed = () => {
                                                                 </p>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                ) : post.workout ? (
-                                                    /* Only workout exists */
-                                                    <div className="flex items-start">
-                                                        <div className="flex-shrink-0 bg-yellow-500/20 p-2 rounded-lg mr-3">
-                                                            <motion.span
-                                                                className="text-xl"
-                                                                animate={{
-                                                                    scale: [1, 1.2, 1],
-                                                                    rotate: [0, 5, -5, 0]
-                                                                }}
-                                                                transition={{
-                                                                    duration: 2,
-                                                                    repeat: Infinity,
-                                                                    repeatDelay: 4
-                                                                }}
-                                                            >
-                                                                🏋️
-                                                            </motion.span>
-                                                        </div>
-                                                        <div>
-                                                            <motion.h4
-                                                                className="font-semibold text-yellow-500 mb-1"
-                                                                style={{
-                                                                    background: "linear-gradient(90deg, #eab308 0%, #f59e0b 100%)",
-                                                                    backgroundClip: "text",
-                                                                    WebkitBackgroundClip: "text",
-                                                                    WebkitTextFillColor: "transparent"
-                                                                }}
-                                                            >
-                                                                Linked Workout
-                                                            </motion.h4>
-                                                            <p className="text-sm text-gray-200 font-medium">
-                                                                {post.workout.title} · {post.workout.duration} mins
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    /* Only nutrition log exists */
-                                                    <div className="flex items-start">
-                                                        <div className="flex-shrink-0 bg-green-500/20 p-2 rounded-lg mr-3">
-                                                            <motion.span
-                                                                className="text-xl"
-                                                                animate={{
-                                                                    scale: [1, 1.1, 1],
-                                                                    rotate: [0, 2, -2, 0]
-                                                                }}
-                                                                transition={{
-                                                                    duration: 2,
-                                                                    repeat: Infinity,
-                                                                    repeatDelay: 4
-                                                                }}
-                                                            >
-                                                                🥗
-                                                            </motion.span>
-                                                        </div>
-                                                        <div>
-                                                            <motion.h4
-                                                                className="font-semibold text-green-500 mb-1"
-                                                                style={{
-                                                                    background: "linear-gradient(90deg, #22c55e 0%, #16a34a 100%)",
-                                                                    backgroundClip: "text",
-                                                                    WebkitBackgroundClip: "text",
-                                                                    WebkitTextFillColor: "transparent"
-                                                                }}
-                                                            >
-                                                                Linked Nutrition
-                                                            </motion.h4>
-                                                            <p className="text-sm text-gray-200 font-medium">
-                                                                {post.nutritionLog.foodName} · {post.nutritionLog.calories} kcal
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </motion.div>
-                                        )}
-
-                                        <div className="flex items-center justify-between text-gray-400 pt-4 border-t border-gray-700/50">
-                                            <div className="flex gap-6">
-                                                <motion.button
-                                                    whileTap={{ scale: 1.3 }}
-                                                    onClick={() => handleLike(post.id)}
-                                                    className="flex items-center gap-2 transition-colors duration-300 relative group"
-                                                >
-                                                    {post.likes.some(like => like.userId === currentUser?.id) ? (
-                                                        <>
-                                                            <HeartSolidIcon className="h-6 w-6 text-red-500" />
-                                                            <motion.div
-                                                                initial={{ scale: 0, opacity: 0 }}
-                                                                animate={{
-                                                                    scale: [1.5, 1],
-                                                                    opacity: [1, 0],
-                                                                }}
-                                                                transition={{ duration: 0.5 }}
-                                                                className="absolute inset-0 bg-red-500 rounded-full blur-md z-0"
-                                                            />
-                                                        </>
-                                                    ) : (
-                                                        <HeartIcon className="h-6 w-6 group-hover:text-red-400" />
                                                     )}
-                                                    <span className="group-hover:text-red-400">{post.likes.length}</span>
-                                                </motion.button>
+                                                </motion.div>
+                                            )}
 
-                                                <Link
-                                                    to={`/post/${post.id}`}
-                                                    className="flex items-center gap-2 hover:text-yellow-500 transition-colors duration-300 group"
-                                                >
-                                                    <ChatBubbleLeftIcon className="h-6 w-6" />
-                                                    <span>{post.comments.length}</span>
-                                                    {post.comments.length > 0 && (
-                                                        <span className="absolute scale-0 group-hover:scale-100 opacity-0 group-hover:opacity-100 bg-gray-700 text-xs py-1 px-2 rounded transition-all duration-300 -translate-y-8 translate-x-8">
-                                                            View comments
+                                            <div className="flex items-center justify-between text-gray-400 pt-4 border-t border-gray-700/50">
+                                                <div className="flex gap-6">
+                                                    <motion.button
+                                                        whileTap={{ scale: 1.3 }}
+                                                        onClick={(e) => handleLike(post.id, e)}
+                                                        className="flex items-center gap-2 transition-colors duration-300 relative group"
+                                                    >
+                                                        {post.likes.some(like => like.userId === currentUser?.id) ? (
+                                                            <>
+                                                                <HeartSolidIcon className="h-6 w-6 text-red-500" />
+                                                                <motion.div
+                                                                    initial={{ scale: 0, opacity: 0 }}
+                                                                    animate={{
+                                                                        scale: [1.5, 1],
+                                                                        opacity: [1, 0],
+                                                                    }}
+                                                                    transition={{ duration: 0.5 }}
+                                                                    className="absolute inset-0 bg-red-500 rounded-full blur-md z-0"
+                                                                />
+                                                            </>
+                                                        ) : (
+                                                            <HeartIcon className="h-6 w-6 group-hover:text-red-400" />
+                                                        )}
+                                                        <span className="group-hover:text-red-400">{post.likes.length}</span>
+                                                    </motion.button>
+
+                                                    <div className="flex items-center gap-2 transition-colors duration-300 group">
+                                                        <ChatBubbleLeftIcon className="h-6 w-6" />
+                                                        <span>{post.comments.length}</span>
+                                                        {post.comments.length > 0 && (
+                                                            <span className="absolute scale-0 group-hover:scale-100 opacity-0 group-hover:opacity-100 bg-gray-700 text-xs py-1 px-2 rounded transition-all duration-300 -translate-y-8 translate-x-8">
+                                                                View comments
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex gap-4">
+                                                    <motion.button
+                                                        whileHover={{ scale: 1.1, y: -2 }}
+                                                        whileTap={{ scale: 0.9 }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleBookmark(post.id, e)
+                                                        }}
+                                                        className="text-gray-400 transition-colors duration-300 relative group"
+                                                    >
+                                                        {bookmarkedPosts.includes(post.id) ? (
+                                                            <BookmarkSolidIcon className="h-5 w-5 text-yellow-500" />
+                                                        ) : (
+                                                            <BookmarkIcon className="h-5 w-5 group-hover:text-yellow-500" />
+                                                        )}
+                                                        <span className="absolute right-0 whitespace-nowrap mt-1 py-1 px-2 bg-gray-700 text-xs rounded scale-0 group-hover:scale-100 opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-y-8">
+                                                            {bookmarkedPosts.includes(post.id) ? 'Saved' : 'Save post'}
                                                         </span>
-                                                    )}
-                                                </Link>
-                                            </div>
+                                                    </motion.button>
 
-                                            <div className="flex gap-4">
-                                                <motion.button
-                                                    whileHover={{ scale: 1.1, y: -2 }}
-                                                    whileTap={{ scale: 0.9 }}
-                                                    onClick={() => handleBookmark(post.id)}
-                                                    className="text-gray-400 transition-colors duration-300 relative group"
-                                                >
-                                                    {bookmarkedPosts.includes(post.id) ? (
-                                                        <BookmarkSolidIcon className="h-5 w-5 text-yellow-500" />
-                                                    ) : (
-                                                        <BookmarkIcon className="h-5 w-5 group-hover:text-yellow-500" />
-                                                    )}
-                                                    <span className="absolute right-0 whitespace-nowrap mt-1 py-1 px-2 bg-gray-700 text-xs rounded scale-0 group-hover:scale-100 opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-y-8">
-                                                        {bookmarkedPosts.includes(post.id) ? 'Saved' : 'Save post'}
-                                                    </span>
-                                                </motion.button>
-
-                                                <motion.button
-                                                    whileHover={{ scale: 1.1, y: -2 }}
-                                                    whileTap={{ scale: 0.9 }}
-                                                    className="text-gray-400 hover:text-yellow-500 transition-colors duration-300 relative group"
-                                                >
-                                                    <ShareIcon className="h-5 w-5" />
-                                                    <span className="absolute right-0 whitespace-nowrap mt-1 py-1 px-2 bg-gray-700 text-xs rounded scale-0 group-hover:scale-100 opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-y-8">
-                                                        Share post
-                                                    </span>
-                                                </motion.button>
+                                                    <motion.button
+                                                        whileHover={{ scale: 1.1, y: -2 }}
+                                                        whileTap={{ scale: 0.9 }}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        className="text-gray-400 hover:text-yellow-500 transition-colors duration-300 relative group"
+                                                    >
+                                                        <ShareIcon className="h-5 w-5" />
+                                                        <span className="absolute right-0 whitespace-nowrap mt-1 py-1 px-2 bg-gray-700 text-xs rounded scale-0 group-hover:scale-100 opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-y-8">
+                                                            Share post
+                                                        </span>
+                                                    </motion.button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 </motion.div>
                             ))}
                         </motion.div>
@@ -696,7 +700,6 @@ const SocialFeed = () => {
                 </AnimatePresence>
             </div>
 
-            {/* Floating Create Post Button */}
             <AnimatePresence>
                 {scrollDirection === "down" && posts.length > 0 && (
                     <motion.button

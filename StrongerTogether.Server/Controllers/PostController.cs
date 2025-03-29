@@ -84,6 +84,77 @@ namespace StrongerTogether.Server.Controllers
             return Ok(posts);
         }
 
+        [HttpGet("{postId}")]
+        public async Task<IActionResult> GetPostById(Guid postId)
+        {
+            var baseUrl = $"{Request.Scheme}://{Request.Host.Value}";
+
+            var post = await _context.Posts
+                .Include(p => p.User)
+                .Include(p => p.Workout)
+                .Include(p => p.NutritionLog)
+                .Include(p => p.Comments)
+                .ThenInclude(c => c.User)
+                .Include(p => p.Likes)
+                .FirstOrDefaultAsync(p => p.Id == postId);
+
+            if (post == null)
+                return NotFound("Post not found.");
+
+            var postDetails = new
+            {
+                post.Id,
+                post.UserId,
+                User = new
+                {
+                    post.User.Id,
+                    post.User.Username,
+                    ProfileImageUrl = post.User.ProfileImageUrl != null
+                        ? $"{baseUrl}{post.User.ProfileImageUrl}"
+                        : null,
+                    post.User.CreatedAt
+                },
+                post.Content,
+                ImageUrl = post.ImageUrl != null ? $"{baseUrl}{post.ImageUrl}" : null,
+                post.WorkoutId,
+                Workout = post.Workout != null ? new
+                {
+                    post.Workout.Id,
+                    post.Workout.Title,
+                    post.Workout.Duration
+                } : null,
+                post.NutritionLogId,
+                NutritionLog = post.NutritionLog != null ? new
+                {
+                    post.NutritionLog.Id,
+                    post.NutritionLog.FoodName,
+                    post.NutritionLog.Calories
+                } : null,
+                post.CreatedAt,
+                Comments = post.Comments.OrderByDescending(c => c.CreatedAt).Select(c => new
+                {
+                    c.Id,
+                    c.Content,
+                    c.CreatedAt,
+                    User = new
+                    {
+                        c.User.Id,
+                        c.User.Username,
+                        ProfileImageUrl = c.User.ProfileImageUrl != null
+                            ? $"{baseUrl}{c.User.ProfileImageUrl}"
+                            : null
+                    }
+                }),
+                Likes = post.Likes.Select(l => new
+                {
+                    l.UserId,
+                    l.LikedAt
+                })
+            };
+
+            return Ok(postDetails);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreatePost([FromForm] CreatePostDto model)
         {
