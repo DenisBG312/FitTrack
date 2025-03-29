@@ -62,6 +62,23 @@ namespace StrongerTogether.Server.Controllers
             return Ok(workouts);
         }
 
+        [HttpGet("GetWorkoutsForCurrentUser")]
+        public async Task<IActionResult> GetWorkoutsForCurrentUser()
+        {
+            var userId = GetUserIdFromJwt();
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("No valid JWT token found.");
+            }
+
+            var workouts = await _context.Workouts
+                .Include(u => u.User)
+                .Where(u => u.UserId == userId)
+                .ToListAsync();
+
+            return Ok(workouts);
+        }
+
         [HttpGet("GetSpecificWorkout/{id}")]
         public async Task<ActionResult<WorkoutResponseDto>> GetWorkout(Guid id)
         {
@@ -291,6 +308,37 @@ namespace StrongerTogether.Server.Controllers
         {
             var validDifficulties = new[] { "Beginner", "Intermediate", "Advanced" };
             return validDifficulties.Contains(difficulty);
+        }
+
+        private Guid GetUserIdFromJwt()
+        {
+            var jwtCookie = Request.Cookies["jwt"];
+            if (string.IsNullOrEmpty(jwtCookie))
+            {
+                return Guid.Empty;
+            }
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:SecretKey"]);
+
+            try
+            {
+                var principal = tokenHandler.ValidateToken(jwtCookie, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier);
+                return userIdClaim != null ? Guid.Parse(userIdClaim.Value) : Guid.Empty;
+            }
+            catch (Exception)
+            {
+                return Guid.Empty;
+            }
         }
 
         private bool WorkoutExists(Guid id)

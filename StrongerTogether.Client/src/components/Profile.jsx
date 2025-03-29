@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { profile } from "../services/authService";
 import EditProfileModal from "./EditProfileModal";
+import axios from "axios";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -42,6 +44,7 @@ const Profile = () => {
   const [error, setError] = useState(null);
   const [imageError, setImageError] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [workoutCount, setWorkoutCount] = useState(0);
   
   const fetchProfile = async () => {
     setLoading(true);
@@ -49,14 +52,26 @@ const Profile = () => {
       const response = await profile();
       setUserData(response.data);
     } catch (error) {
-      setError("Failed to fetch profile data.");
+      setError(`Failed to fetch profile data: ${error}`);
     } finally {
       setLoading(false);
     }
   };
 
+  const fetchWorkouts = async () => {
+    try {
+      const response = await axios.get('https://localhost:7039/api/Workout/GetWorkoutsForCurrentUser', {
+        withCredentials: true
+      });
+      setWorkoutCount(response.data.length);
+    } catch (error) {
+      console.error(`Error fetching workouts: ${error}}`);
+    }
+  };
+
   useEffect(() => {
     fetchProfile();
+    fetchWorkouts();
   }, []);
 
   const handleClose = () => setIsModalOpen(false);
@@ -294,7 +309,7 @@ const Profile = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="rounded-lg bg-gray-800 p-4 shadow-sm">
                     <h3 className="text-sm font-medium text-gray-400">Workouts</h3>
-                    <p className="mt-1 text-2xl font-bold text-yellow-500">{userData?.stats?.workouts || 0}</p>
+                    <p className="mt-1 text-2xl font-bold text-yellow-500">{workoutCount}</p>
                   </div>
                   <div className="rounded-lg bg-gray-800 p-4 shadow-sm">
                     <h3 className="text-sm font-medium text-gray-400">Active Days</h3>
