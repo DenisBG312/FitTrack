@@ -17,3 +17,6 @@
 
 # JSON backups
 *.backup.json
+*.jpg
+*.png
+

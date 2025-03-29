@@ -10,6 +10,7 @@ import { checkAuth, logout } from "./services/authService";
 import Workouts from "./components/WorkoutComponents/Workouts";
 import WorkoutDetails from "./components/WorkoutComponents/WorkoutDetails";
 import Nutritions from "./components/NutritionComponents/Nutritions";
+import SocialFeed from "./components/SocialFeed";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -52,7 +53,7 @@ const App = () => {
         <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
         <Route path="/workouts" element={<Workouts />} />
         <Route path="/workouts/:id" element={<WorkoutDetails />} />
-
+        <Route path="/community" element={<SocialFeed />} />
         <Route path="/nutritions" element={<ProtectedRoute element={<Nutritions />} />} />
       </Routes>
     </div>
