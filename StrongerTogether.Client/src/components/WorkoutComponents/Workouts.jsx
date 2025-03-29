@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaDumbbell, FaPlus } from "react-icons/fa";
+import { FaDumbbell, FaPlus, FaSearch } from "react-icons/fa";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import WorkoutCard from "./WorkoutCard";
@@ -247,7 +247,7 @@ const Workouts = () => {
               Community Workouts
             </motion.h1>
           </div>
-          {(userRole === 'Admin' || userRole === 'Coach') && (
+          {(userRole == 'Admin' || userRole == 'Coach') && (
             <motion.button
               onClick={() => setIsModalOpen(true)}
               className="flex items-center bg-gradient-to-r from-yellow-500 to-yellow-600 text-gray-900 px-6 py-3 rounded-lg font-bold shadow-lg hover:shadow-xl"

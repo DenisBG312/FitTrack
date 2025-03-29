@@ -45,6 +45,7 @@ const Profile = () => {
   const [imageError, setImageError] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [workoutCount, setWorkoutCount] = useState(0);
+  const [nutritionsCount, setNutritionCount] = useState(0);
   
   const fetchProfile = async () => {
     setLoading(true);
@@ -69,9 +70,21 @@ const Profile = () => {
     }
   };
 
+  const fetchNutritions = async () => {
+    try {
+      const response = await axios.get('https://localhost:7039/api/NutritionLog', {
+        withCredentials: true
+      });
+      setNutritionCount(response.data.length);
+    } catch (error) {
+      console.log(`Error fetching nutritions: ${error}`);
+    }
+  };
+
   useEffect(() => {
     fetchProfile();
     fetchWorkouts();
+    fetchNutritions();
   }, []);
 
   const handleClose = () => setIsModalOpen(false);
@@ -309,19 +322,11 @@ const Profile = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="rounded-lg bg-gray-800 p-4 shadow-sm">
                     <h3 className="text-sm font-medium text-gray-400">Workouts</h3>
-                    <p className="mt-1 text-2xl font-bold text-yellow-500">{workoutCount}</p>
+                    <p className="mt-1 text-2xl font-bold text-yellow-500">{workoutCount || 0}</p>
                   </div>
                   <div className="rounded-lg bg-gray-800 p-4 shadow-sm">
-                    <h3 className="text-sm font-medium text-gray-400">Active Days</h3>
-                    <p className="mt-1 text-2xl font-bold text-yellow-500">{userData?.stats?.activeDays || 0}</p>
-                  </div>
-                  <div className="rounded-lg bg-gray-800 p-4 shadow-sm">
-                    <h3 className="text-sm font-medium text-gray-400">Goals Set</h3>
-                    <p className="mt-1 text-2xl font-bold text-yellow-500">{userData?.stats?.goals || 0}</p>
-                  </div>
-                  <div className="rounded-lg bg-gray-800 p-4 shadow-sm">
-                    <h3 className="text-sm font-medium text-gray-400">Goals Completed</h3>
-                    <p className="mt-1 text-2xl font-bold text-yellow-500">{userData?.stats?.goalsCompleted || 0}</p>
+                    <h3 className="text-sm font-medium text-gray-400">Logged Nutritions</h3>
+                    <p className="mt-1 text-2xl font-bold text-yellow-500">{nutritionsCount || 0}</p>
                   </div>
                 </div>
                 <div>
