@@ -85,18 +85,19 @@ namespace StrongerTogether.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateComment(Guid id, [FromBody] Comment updatedComment)
+        public async Task<IActionResult> UpdateComment(Guid id, [FromBody] UpdateCommentDto updateDto)
         {
-            if (updatedComment == null || string.IsNullOrWhiteSpace(updatedComment.Content))
-                return BadRequest("Invalid comment data");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             var comment = await _context.Comments.FindAsync(id);
             if (comment == null) return NotFound("Comment not found");
 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null || comment.UserId.ToString() != userId) return Forbid();
+            if (userId == null || comment.UserId.ToString() != userId)
+                return Forbid();
 
-            comment.Content = updatedComment.Content;
+            comment.Content = updateDto.Content;
 
             await _context.SaveChangesAsync();
             return Ok(comment);

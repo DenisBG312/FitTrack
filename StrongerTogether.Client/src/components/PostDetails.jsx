@@ -1,10 +1,138 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { HeartIcon, ChatBubbleLeftIcon, BookmarkIcon, ShareIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { HeartIcon as HeartSolidIcon, BookmarkIcon as BookmarkSolidIcon } from "@heroicons/react/24/solid";
+import { 
+  HeartIcon, 
+  ChatBubbleLeftIcon, 
+  BookmarkIcon, 
+  ShareIcon, 
+  ArrowLeftIcon,
+  PencilIcon,
+  TrashIcon,
+  CheckIcon,
+  XMarkIcon
+} from "@heroicons/react/24/outline";
+import { 
+  HeartIcon as HeartSolidIcon, 
+  BookmarkIcon as BookmarkSolidIcon 
+} from "@heroicons/react/24/solid";
 import moment from "moment";
 import axios from "axios";
 import CreateComment from "../components/CreateComment";
+
+const Comment = ({ 
+  comment, 
+  currentUser, 
+  onDelete, 
+  onUpdate 
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(comment.content);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const isOwner = comment.user?.id === currentUser?.id;
+
+  const handleUpdate = async () => {
+    try {
+      await onUpdate(comment.id, editedContent);
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Error updating comment:", err);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this comment?")) {
+      setIsDeleting(true);
+      try {
+        await onDelete(comment.id);
+      } catch (err) {
+        console.error("Error deleting comment:", err);
+        setIsDeleting(false);
+      }
+    }
+  };
+
+  return (
+    <div className="flex gap-3">
+      <img
+        src={`https://localhost:7039/${comment.user?.profileImageUrl}` || "/default-avatar.png"}
+        alt={comment.user?.username}
+        className="w-10 h-10 rounded-full object-cover border-2 border-gray-600"
+      />
+      <div className="flex-1">
+        <div className="bg-gray-700 rounded-lg p-3">
+          <div className="flex justify-between items-start mb-1">
+            <div className="flex items-center gap-2">
+              <Link 
+                to={`/profile/${comment.user?.id}`}
+                className="font-semibold text-sm hover:text-yellow-500"
+              >
+                {comment.user?.username}
+              </Link>
+              <span className="text-xs text-gray-400">
+                {moment(comment.createdAt).fromNow()}
+              </span>
+            </div>
+            
+            {isOwner && !isEditing && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="text-gray-400 hover:text-yellow-500"
+                  title="Edit"
+                >
+                  <PencilIcon className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="text-gray-400 hover:text-red-500"
+                  title="Delete"
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? (
+                    <div className="animate-spin h-4 w-4 border-t-2 border-b-2 border-red-500 rounded-full"></div>
+                  ) : (
+                    <TrashIcon className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+          
+          {isEditing ? (
+            <div className="mt-2">
+              <textarea
+                value={editedContent}
+                onChange={(e) => setEditedContent(e.target.value)}
+                className="w-full bg-gray-800 text-gray-100 rounded p-2"
+                rows="3"
+              />
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={handleUpdate}
+                  className="flex items-center gap-1 bg-yellow-600 text-white px-2 py-1 rounded text-sm"
+                  disabled={!editedContent.trim()}
+                >
+                  <CheckIcon className="h-3 w-3" />
+                  <span>Save</span>
+                </button>
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="flex items-center gap-1 bg-gray-600 text-white px-2 py-1 rounded text-sm"
+                >
+                  <XMarkIcon className="h-3 w-3" />
+                  <span>Cancel</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-200">{comment.content}</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const PostDetails = () => {
     const { postId } = useParams();
@@ -48,6 +176,35 @@ const PostDetails = () => {
 
     const handleCommentCreated = (newComment) => {
         setComments([...comments, newComment]);
+    };
+
+    const handleDeleteComment = async (commentId) => {
+      try {
+        await axios.delete(`https://localhost:7039/api/Comment/${commentId}`, {
+          withCredentials: true
+        });
+        setComments(comments.filter(c => c.id !== commentId));
+      } catch (err) {
+        console.error("Error deleting comment:", err);
+        throw err;
+      }
+    };
+
+    const handleUpdateComment = async (commentId, newContent) => {
+      try {
+        const response = await axios.put(
+          `https://localhost:7039/api/Comment/${commentId}`,
+          { content: newContent },
+          { withCredentials: true }
+        );
+        setComments(comments.map(c => 
+          c.id === commentId ? { ...c, content: newContent } : c
+        ));
+        return response.data;
+      } catch (err) {
+        console.error("Error updating comment:", err);
+        throw err;
+      }
     };
 
     const handleLike = async () => {
@@ -236,29 +393,13 @@ const PostDetails = () => {
                 <div className="mt-6 space-y-4">
                     {comments.length > 0 ? (
                         comments.map(comment => (
-                            <div key={comment.id} className="flex gap-3">
-                                <img
-                                    src={`https://localhost:7039/${comment.user?.profileImageUrl}` || "/default-avatar.png"}
-                                    alt={comment.user?.username}
-                                    className="w-10 h-10 rounded-full object-cover border-2 border-gray-600"
-                                />
-                                <div className="flex-1">
-                                    <div className="bg-gray-700 rounded-lg p-3">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <Link 
-                                                to={`/profile/${comment.user?.id}`}
-                                                className="font-semibold text-sm hover:text-yellow-500"
-                                            >
-                                                {comment.user?.username}
-                                            </Link>
-                                            <span className="text-xs text-gray-400">
-                                                {moment(comment.createdAt).fromNow()}
-                                            </span>
-                                        </div>
-                                        <p className="text-gray-200">{comment.content}</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <Comment
+                                key={comment.id}
+                                comment={comment}
+                                currentUser={currentUser}
+                                onDelete={handleDeleteComment}
+                                onUpdate={handleUpdateComment}
+                            />
                         ))
                     ) : (
                         <p className="text-gray-400 text-center py-4">No comments yet</p>
