@@ -101,32 +101,15 @@ const SocialFeed = () => {
         fetchPosts();
     }, [activeTab]);
 
-    const handlePostCreated = (newPost) => {
-        if (!currentUser) {
-            fetchPosts();
-            setShowCreateModal(false);
-            return;
-        }
-
-        const completePost = {
-            ...newPost,
-            id: `temp-${Date.now()}`,
-            user: {
-                id: currentUser.id,
-                username: currentUser.username,
-                profileImageUrl: currentUser.profileImageUrl,
-            },
-            comments: [],
-            likes: [],
-            createdAt: new Date().toISOString(),
-            imageUrl: newPost.imageUrl ? `https://localhost:7039/${newPost.imageUrl}` : null,
-            engagement: 0,
-            likeProbability: 0.5
-        };
-        setPosts([completePost, ...posts]);
+    const handlePostCreated = async (newPost) => {
         setShowCreateModal(false);
 
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        try {
+            await fetchPosts();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        } catch (err) {
+            console.error("Error refetching posts:", err);
+        }
     };
 
     const handleLike = (postId, e) => {
@@ -153,6 +136,7 @@ const SocialFeed = () => {
     };
 
     const handleBookmark = (postId, e) => {
+        e.preventDefault();
         e.stopPropagation();
         if (bookmarkedPosts.includes(postId)) {
             setBookmarkedPosts(bookmarkedPosts.filter(id => id !== postId));
