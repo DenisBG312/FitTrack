@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
 const EditProfileModal = ({ isOpen, onClose, userData, onUpdate }) => {
+  const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
   const [formData, setFormData] = useState({
     username: "",
     height: "",
@@ -68,7 +69,7 @@ const EditProfileModal = ({ isOpen, onClose, userData, onUpdate }) => {
       if (formData.weight) formPayload.append("Weight", formData.weight);
       if (formData.profileImage) formPayload.append("ProfileImage", formData.profileImage);
   
-      const response = await axios.put("https://localhost:7039/api/auth/edit", formPayload, {
+      const response = await axios.put(`${API_URL}/auth/edit`, formPayload, {
         withCredentials: true
       });
   

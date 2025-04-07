@@ -39,6 +39,7 @@ const loadingCircleTransition = {
 };
 
 const Profile = () => {
+  const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -61,7 +62,7 @@ const Profile = () => {
 
   const fetchWorkouts = async () => {
     try {
-      const response = await axios.get('https://localhost:7039/api/Workout/GetWorkoutsForCurrentUser', {
+      const response = await axios.get(`${API_URL}/Workout/GetWorkoutsForCurrentUser`, {
         withCredentials: true
       });
       setWorkoutCount(response.data.length);
@@ -72,7 +73,7 @@ const Profile = () => {
 
   const fetchNutritions = async () => {
     try {
-      const response = await axios.get('https://localhost:7039/api/NutritionLog', {
+      const response = await axios.get(`${API_URL}/NutritionLog`, {
         withCredentials: true
       });
       setNutritionCount(response.data.length);
@@ -85,6 +86,7 @@ const Profile = () => {
     fetchProfile();
     fetchWorkouts();
     fetchNutritions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleClose = () => setIsModalOpen(false);

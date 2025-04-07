@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const API_URL = "https://localhost:7039/api/auth";
+const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
 
 export const register = async (formData) => {
   try {
-    const response = await axios.post("https://localhost:7039/api/auth/register", formData, {
+    const response = await axios.post(`${API_URL}/auth/register`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -16,20 +16,20 @@ export const register = async (formData) => {
 };
 
 export const login = async (credentials) => {
-  const response = await axios.post(`${API_URL}/login`, credentials, {
+  const response = await axios.post(`${API_URL}/auth/login`, credentials, {
     withCredentials: true,
   });
   return response.data;
 };
 
 export const logout = async () => {
-  return axios.post(`${API_URL}/logout`, {}, {
+  return axios.post(`${API_URL}/auth/logout`, {}, {
     withCredentials: true,
   });
 };
 
 export const profile = async () => {
-  return axios.get(`${API_URL}/profile`, {
+  return axios.get(`${API_URL}/auth/profile`, {
     withCredentials: true,
   });
 };
@@ -37,7 +37,7 @@ export const profile = async () => {
 export const checkAuth = async () => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const response = await axios.get(`${API_URL}/profile`, {
+    const response = await axios.get(`${API_URL}/auth/profile`, {
       withCredentials: true,
     });
     return response.data;

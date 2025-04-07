@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate  } from "react-router-dom";
 import { HeartIcon, ChatBubbleLeftIcon, ArrowPathIcon, PlusIcon, BookmarkIcon, ShareIcon, EllipsisHorizontalIcon, FireIcon, UserGroupIcon, GlobeAltIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolidIcon, BookmarkIcon as BookmarkSolidIcon } from "@heroicons/react/24/solid";
 import moment from "moment";
 import axios from "axios";
 import CreatePostModal from "./CreatePostModal";
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence, useScroll, useTransform, useMotionTemplate, useSpring } from "framer-motion";
 
 const SocialFeed = () => {
@@ -19,6 +20,7 @@ const SocialFeed = () => {
     const [lastScrollTop, setLastScrollTop] = useState(0);
     const feedRef = useRef(null);
     const headerRef = useRef(null);
+    const navigate = useNavigate();
 
     const { scrollY } = useScroll();
     const scrollYSmoothPx = useSpring(scrollY, { stiffness: 500, damping: 150, mass: 1 });
@@ -101,6 +103,7 @@ const SocialFeed = () => {
         fetchPosts();
     }, [activeTab]);
 
+    // eslint-disable-next-line no-unused-vars
     const handlePostCreated = async (newPost) => {
         setShowCreateModal(false);
 
@@ -389,8 +392,8 @@ const SocialFeed = () => {
                                     style={{
                                         boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.2)"
                                     }}
+                                    onClick={() => navigate(`/posts/${post.id}`)}
                                 >
-                                    <Link to={`/posts/${post.id}`} className="block">
                                         <div className="p-5 sm:p-6">
                                             <div className="flex items-center justify-between mb-4">
                                                 <Link
@@ -676,7 +679,6 @@ const SocialFeed = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                    </Link>
                                 </motion.div>
                             ))}
                         </motion.div>

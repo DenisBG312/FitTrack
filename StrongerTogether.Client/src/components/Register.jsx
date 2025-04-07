@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Register = () => {
+  const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -29,7 +30,7 @@ const Register = () => {
     formData.append("profileImage", profileImage);
   
     try {
-      await axios.post("https://localhost:7039/api/auth/register", formData, {
+      await axios.post(`${API_URL}/auth/register`, formData, {
         withCredentials: true,
       });
       navigate("/login");

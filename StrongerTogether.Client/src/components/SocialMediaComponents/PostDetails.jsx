@@ -17,7 +17,7 @@ import {
 } from "@heroicons/react/24/solid";
 import moment from "moment";
 import axios from "axios";
-import CreateComment from "../components/CreateComment";
+import CreateComment from "./CreateComment";
 
 const Comment = ({ 
   comment, 
@@ -55,6 +55,7 @@ const Comment = ({
   return (
     <div className="flex gap-3">
       <img
+        // eslint-disable-next-line no-constant-binary-expression
         src={`https://localhost:7039/${comment.user?.profileImageUrl}` || "/default-avatar.png"}
         alt={comment.user?.username}
         className="w-10 h-10 rounded-full object-cover border-2 border-gray-600"
@@ -135,6 +136,7 @@ const Comment = ({
 };
 
 const PostDetails = () => {
+  const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
     const { postId } = useParams();
     const [post, setPost] = useState(null);
     const [comments, setComments] = useState([]);
@@ -148,13 +150,13 @@ const PostDetails = () => {
             try {
                 setLoading(true);
                 
-                const postResponse = await axios.get(`https://localhost:7039/api/Post/${postId}`);
+                const postResponse = await axios.get(`${API_URL}/Post/${postId}`);
                 setPost(postResponse.data);
                 
-                const commentsResponse = await axios.get(`https://localhost:7039/api/Comment/post/${postId}`);
+                const commentsResponse = await axios.get(`${API_URL}/Comment/post/${postId}`);
                 setComments(commentsResponse.data);
                 
-                const userResponse = await axios.get("https://localhost:7039/api/auth/profile", {
+                const userResponse = await axios.get(`${API_URL}/auth/profile`, {
                     withCredentials: true
                 });
                 setCurrentUser({
@@ -172,7 +174,7 @@ const PostDetails = () => {
         };
 
         fetchData();
-    }, [postId]);
+    }, [API_URL, postId]);
 
     const handleCommentCreated = (newComment) => {
         setComments([...comments, newComment]);
@@ -180,7 +182,7 @@ const PostDetails = () => {
 
     const handleDeleteComment = async (commentId) => {
       try {
-        await axios.delete(`https://localhost:7039/api/Comment/${commentId}`, {
+        await axios.delete(`${API_URL}/Comment/${commentId}`, {
           withCredentials: true
         });
         setComments(comments.filter(c => c.id !== commentId));
@@ -193,7 +195,7 @@ const PostDetails = () => {
     const handleUpdateComment = async (commentId, newContent) => {
       try {
         const response = await axios.put(
-          `https://localhost:7039/api/Comment/${commentId}`,
+          `${API_URL}/Comment/${commentId}`,
           { content: newContent },
           { withCredentials: true }
         );
@@ -209,7 +211,7 @@ const PostDetails = () => {
 
     const handleLike = async () => {
         try {
-            await axios.post(`https://localhost:7039/api/Post/like/${postId}`, {}, {
+            await axios.post(`${API_URL}/Post/like/${postId}`, {}, {
                 withCredentials: true
             });
             
@@ -225,11 +227,11 @@ const PostDetails = () => {
     const handleBookmark = async () => {
         try {
             if (bookmarked) {
-                await axios.delete(`https://localhost:7039/api/Bookmark/${postId}`, {
+                await axios.delete(`${API_URL}/Bookmark/${postId}`, {
                     withCredentials: true
                 });
             } else {
-                await axios.post(`https://localhost:7039/api/Bookmark/${postId}`, {}, {
+                await axios.post(`${API_URL}/Bookmark/${postId}`, {}, {
                     withCredentials: true
                 });
             }

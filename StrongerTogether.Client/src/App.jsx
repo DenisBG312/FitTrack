@@ -10,8 +10,8 @@ import { checkAuth, logout } from "./services/authService";
 import Workouts from "./components/WorkoutComponents/Workouts";
 import WorkoutDetails from "./components/WorkoutComponents/WorkoutDetails";
 import Nutritions from "./components/NutritionComponents/Nutritions";
-import SocialFeed from "./components/SocialFeed";
-import PostDetails from "./components/PostDetails";
+import SocialFeed from "./components/SocialMediaComponents/SocialFeed";
+import PostDetails from "./components/SocialMediaComponents/PostDetails";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

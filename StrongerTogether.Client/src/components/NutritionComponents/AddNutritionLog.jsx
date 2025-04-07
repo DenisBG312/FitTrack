@@ -17,6 +17,7 @@ import {
 } from 'date-fns';
 
 const AddNutritionLog = ({ onLogAdded }) => {
+  const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -162,7 +163,7 @@ const AddNutritionLog = ({ onLogAdded }) => {
       };
 
       const response = await axios.post(
-        "https://localhost:7039/api/NutritionLog",
+        `${API_URL}/NutritionLog`,
         apiFormData,
         {
           withCredentials: true,

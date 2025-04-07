@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const CreateComment = ({ postId, onCommentCreated }) => {
+    const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -13,7 +14,7 @@ const CreateComment = ({ postId, onCommentCreated }) => {
 
         try {
             const response = await axios.post(
-                `https://localhost:7039/api/Comment`,
+                `${API_URL}/Comment`,
                 { postId, content },
                 { withCredentials: true }
             );

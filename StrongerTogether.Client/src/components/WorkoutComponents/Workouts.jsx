@@ -11,6 +11,7 @@ import LoadingSpinner from "../LoadingSpinner";
 import ErrorAlert from "../ErrorAlert";
 
 const Workouts = () => {
+  const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
   const [workouts, setWorkouts] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,7 +56,7 @@ const Workouts = () => {
   const fetchWorkouts = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get("https://localhost:7039/api/Workout");
+      const response = await axios.get(`${API_URL}/Workout`);
       setWorkouts(response.data);
     } catch (error) {
       console.error("Error fetching workouts:", error);
@@ -68,7 +69,7 @@ const Workouts = () => {
   useEffect(() => {
     const fetchUserId = async () => {
       try {
-        const response = await axios.get("https://localhost:7039/api/auth/profile", {
+        const response = await axios.get(`${API_URL}/auth/profile`, {
           withCredentials: true,
         });
         setUserId(response.data.id);
@@ -104,7 +105,7 @@ const Workouts = () => {
   const handleAddWorkout = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("https://localhost:7039/api/Workout", newWorkout, {
+      await axios.post(`${API_URL}/Workout`, newWorkout, {
         withCredentials: true,
       });
       await fetchWorkouts();
@@ -128,7 +129,7 @@ const Workouts = () => {
     e.preventDefault();
     try {
       await axios.put(
-        `https://localhost:7039/api/Workout/${editedWorkout.id}`,
+        `${API_URL}/Workout/${editedWorkout.id}`,
         editedWorkout,
         { withCredentials: true }
       );
@@ -152,7 +153,7 @@ const Workouts = () => {
 
     if (window.confirm("Are you sure you want to delete this workout?")) {
       try {
-        await axios.delete(`https://localhost:7039/api/Workout/${workoutId}`, {
+        await axios.delete(`${API_URL}/Workout/${workoutId}`, {
           withCredentials: true,
         });
         await fetchWorkouts();

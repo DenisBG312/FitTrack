@@ -4,6 +4,7 @@ import { XMarkIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import moment from "moment";
 
 const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
+  const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -23,12 +24,13 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
       fetchWorkouts();
       fetchNutritionLogs();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const fetchWorkouts = async () => {
     setLoadingWorkouts(true);
     try {
-      const response = await axios.get("https://localhost:7039/api/Workout", {
+      const response = await axios.get(`${API_URL}/Workout`, {
         withCredentials: true
       });
       setWorkouts(response.data);
@@ -42,7 +44,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
   const fetchNutritionLogs = async () => {
     setLoadingNutritions(true);
     try {
-      const response = await axios.get("https://localhost:7039/api/NutritionLog", {
+      const response = await axios.get(`${API_URL}/NutritionLog`, {
         withCredentials: true
       });
       setNutritions(response.data);
@@ -66,7 +68,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
     if (formData.nutritionLogId) data.append("nutritionLogId", formData.nutritionLogId);
 
     try {
-      const response = await axios.post("https://localhost:7039/api/Post", data, {
+      const response = await axios.post(`${API_URL}/Post`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

@@ -11,6 +11,7 @@ const formatNumber = (num) => {
 };
 
 const Nutrition = () => {
+  const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
   const [nutritionLogs, setNutritionLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,7 +35,7 @@ const Nutrition = () => {
 
   const fetchNutritionLogs = async () => {
     try {
-      const response = await axios.get("https://localhost:7039/api/NutritionLog", {
+      const response = await axios.get(`${API_URL}/NutritionLog`, {
         withCredentials: true,
       });
       setNutritionLogs(response.data);

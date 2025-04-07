@@ -12,6 +12,7 @@ import {
 import { motion } from "framer-motion";
 
 const WorkoutDetails = () => {
+  const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
   const { id } = useParams();
   const navigate = useNavigate();
   const [workout, setWorkout] = useState(null);
@@ -27,7 +28,7 @@ const WorkoutDetails = () => {
     const fetchWorkout = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(`https://localhost:7039/api/Workout/GetSpecificWorkout/${id}`);
+        const response = await axios.get(`${API_URL}/Workout/GetSpecificWorkout/${id}`);
         setWorkout(response.data);
       } catch (error) {
         console.error("Error fetching workout:", error);
@@ -38,7 +39,7 @@ const WorkoutDetails = () => {
     };
 
     fetchWorkout();
-  }, [id]);
+  }, [API_URL, id]);
 
   const difficultyBadges = {
     Beginner: "bg-green-500",
