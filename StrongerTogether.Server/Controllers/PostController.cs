@@ -75,6 +75,7 @@ namespace StrongerTogether.Server.Controllers
                     Likes = p.Likes.Select(l => new
                     {
                         l.UserId,
+                        l.User.Username,
                         l.LikedAt
                     })
                 })
@@ -95,7 +96,7 @@ namespace StrongerTogether.Server.Controllers
                 .Include(p => p.NutritionLog)
                 .Include(p => p.Comments)
                 .ThenInclude(c => c.User)
-                .Include(p => p.Likes)
+                .Include(p => p.Likes).ThenInclude(like => like.User)
                 .FirstOrDefaultAsync(p => p.Id == postId);
 
             if (post == null)
@@ -148,6 +149,7 @@ namespace StrongerTogether.Server.Controllers
                 Likes = post.Likes.Select(l => new
                 {
                     l.UserId,
+                    l.User.Username,
                     l.LikedAt
                 })
             };
@@ -220,6 +222,59 @@ namespace StrongerTogether.Server.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(post);
+        }
+
+        [HttpPost("{postId}/like")]
+        public async Task<IActionResult> ToggleLike(Guid postId)
+        {
+            var userId = GetUserIdFromJwt();
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("User not authenticated.");
+            }
+
+            var post = await _context.Posts
+                .Include(p => p.Likes)
+                .ThenInclude(l => l.User)
+                .FirstOrDefaultAsync(p => p.Id == postId);
+
+            if (post == null)
+            {
+                return NotFound("Post not found.");
+            }
+
+            var existingLike = post.Likes.FirstOrDefault(l => l.UserId == userId);
+
+            if (existingLike != null)
+            {
+                post.Likes.Remove(existingLike);
+            }
+            else
+            {
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    return BadRequest("User not found.");
+                }
+
+                post.Likes.Add(new Like
+                {
+                    UserId = userId,
+                    User = user,
+                    LikedAt = DateTime.UtcNow
+                });
+            }
+
+            await _context.SaveChangesAsync();
+
+            var likes = post.Likes.Select(l => new
+            {
+                l.UserId,
+                l.User.Username,
+                l.LikedAt
+            }).ToList();
+
+            return Ok(new { likes });
         }
 
 

@@ -102,8 +102,8 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-xl w-full max-w-lg p-6 relative shadow-xl">
+    <div className="fixed inset-0 backdrop-blur-sm bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+  <div className="bg-gray-800 rounded-xl w-full max-w-lg p-6 relative shadow-xl max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
