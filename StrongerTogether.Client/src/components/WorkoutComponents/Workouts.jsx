@@ -13,6 +13,9 @@ import ErrorAlert from "../ErrorAlert";
 const Workouts = () => {
   const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
   const [workouts, setWorkouts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(6);
+  const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,11 +56,15 @@ const Workouts = () => {
     };
   }, [isModalOpen, isEditModalOpen]);
 
-  const fetchWorkouts = async () => {
+  const fetchWorkouts = async (page = 1) => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/Workout`);
+      const response = await axios.get(`${API_URL}/Workout?page=${page}&pageSize=${pageSize}`);
       setWorkouts(response.data);
+      const totalPagesHeader = response.headers["x-pagination-totalpages"];
+      if (totalPagesHeader) {
+        setTotalPages(parseInt(totalPagesHeader));
+      }
     } catch (error) {
       console.error("Error fetching workouts:", error);
       setError("Failed to load workouts. Please try again.");
@@ -83,8 +90,8 @@ const Workouts = () => {
   }, []);
 
   useEffect(() => {
-    fetchWorkouts();
-  }, []);
+    fetchWorkouts(currentPage);
+  }, [currentPage]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -108,7 +115,8 @@ const Workouts = () => {
       await axios.post(`${API_URL}/Workout`, newWorkout, {
         withCredentials: true,
       });
-      await fetchWorkouts();
+      await fetchWorkouts(currentPage
+      );
 
       setIsModalOpen(false);
       setNewWorkout({
@@ -156,7 +164,7 @@ const Workouts = () => {
         await axios.delete(`${API_URL}/Workout/${workoutId}`, {
           withCredentials: true,
         });
-        await fetchWorkouts();
+        await fetchWorkouts(currentPage);
       } catch (error) {
         console.error("Error deleting workout:", error);
         setError("Failed to delete workout. Please try again.");
@@ -352,7 +360,65 @@ const Workouts = () => {
             />
           ))}
         </motion.div>
+        {!isLoading && totalPages > 1 && (
+          <motion.div
+            className="flex justify-center items-center mt-10 space-x-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            <motion.button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={`px-5 py-3 rounded-lg font-medium flex items-center ${currentPage === 1
+                  ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 hover:border-yellow-500"
+                }`}
+              whileHover={{ scale: currentPage === 1 ? 1 : 1.05 }}
+              whileTap={{ scale: currentPage === 1 ? 1 : 0.95 }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Previous
+            </motion.button>
+
+            <div className="flex items-center space-x-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <motion.button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-10 h-10 rounded-lg font-bold flex items-center justify-center ${currentPage === page
+                      ? "bg-gradient-to-r from-yellow-500 to-yellow-600 text-gray-900"
+                      : "bg-gray-800 hover:bg-gray-700 text-white"
+                    }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {page}
+                </motion.button>
+              ))}
+            </div>
+
+            <motion.button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className={`px-5 py-3 rounded-lg font-medium flex items-center ${currentPage === totalPages
+                  ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 hover:border-yellow-500"
+                }`}
+              whileHover={{ scale: currentPage === totalPages ? 1 : 1.05 }}
+              whileTap={{ scale: currentPage === totalPages ? 1 : 0.95 }}
+            >
+              Next
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </motion.button>
+          </motion.div>
+        )}
       </motion.div>
+
     </div>
   );
 };

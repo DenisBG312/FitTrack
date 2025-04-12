@@ -26,12 +26,23 @@ namespace StrongerTogether.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WorkoutResponseDto>>> GetWorkouts()
+        public async Task<ActionResult<IEnumerable<WorkoutResponseDto>>> GetWorkouts(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
             var baseUrl = $"{Request.Scheme}://{Request.Host.Value}";
 
-            var workouts = await _context.Workouts
+            var query = _context.Workouts
                 .Include(w => w.User)
+                .OrderByDescending(w => w.CreatedAt)
+                .AsQueryable();
+
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            var workouts = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(w => new WorkoutResponseDto
                 {
                     Id = w.Id,
@@ -58,6 +69,11 @@ namespace StrongerTogether.Server.Controllers
                     CreatedAt = w.CreatedAt
                 })
                 .ToListAsync();
+
+            Response.Headers.Add("X-Pagination-TotalCount", totalCount.ToString());
+            Response.Headers.Add("X-Pagination-TotalPages", totalPages.ToString());
+            Response.Headers.Add("X-Pagination-CurrentPage", page.ToString());
+            Response.Headers.Add("X-Pagination-PageSize", pageSize.ToString());
 
             return Ok(workouts);
         }

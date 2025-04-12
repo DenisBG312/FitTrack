@@ -23,7 +23,9 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials();
+            .AllowCredentials()
+            .WithExposedHeaders("X-Pagination-TotalPages", "X-Pagination-TotalCount", "X-Pagination-CurrentPage",
+                "X-Pagination-PageSize");
     });
 });
 
