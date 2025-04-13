@@ -12,6 +12,7 @@ import WorkoutDetails from "./components/WorkoutComponents/WorkoutDetails";
 import Nutritions from "./components/NutritionComponents/Nutritions";
 import SocialFeed from "./components/SocialMediaComponents/SocialFeed";
 import PostDetails from "./components/SocialMediaComponents/PostDetails";
+import GymList from "./components/GymList";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -57,6 +58,7 @@ const App = () => {
         <Route path="/community" element={<SocialFeed />} />
         <Route path="/nutritions" element={<ProtectedRoute element={<Nutritions />} />} />
         <Route path="/posts/:postId" element={<PostDetails />} />
+        <Route path="/gyms-in-ruse" element={<ProtectedRoute element={<GymList />} />} />
       </Routes>
     </div>
   );
