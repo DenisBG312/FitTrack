@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import LoadingSpinner from "./LoadingSpinner";
+import Footer from "./Footer";
 
 const GymList = () => {
     const [gyms, setGyms] = useState([]);
@@ -223,7 +224,7 @@ const GymList = () => {
                     )}
                 </div>
             </div>
-            
+            <Footer />
         </div>
     );
 };

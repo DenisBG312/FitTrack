@@ -5,6 +5,7 @@ import LoadingSpinner from "../LoadingSpinner";
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 import { format, parseISO, isSameDay } from "date-fns";
+import Footer from "../Footer";
 
 const formatNumber = (num) => {
   return Number(num).toFixed(1).replace('.0', '');
@@ -379,6 +380,7 @@ const Nutrition = () => {
           )}
         </AnimatePresence>
       </div>
+      <Footer />
     </div>
   );
 };

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { profile } from "../services/authService";
 import EditProfileModal from "./EditProfileModal";
 import axios from "axios";
+import Footer from "./Footer";
 
 const containerVariants = {
   hidden: { opacity: 0 },
