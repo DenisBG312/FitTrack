@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StrongerTogether.Server.Models;
+using System.Reflection;
 
 namespace StrongerTogether.Server.Data
 {
@@ -27,6 +28,8 @@ namespace StrongerTogether.Server.Data
 
             modelBuilder.Entity<Like>()
                 .HasKey(l => new { l.UserId, l.PostId });
+
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             base.OnModelCreating(modelBuilder);
         }
