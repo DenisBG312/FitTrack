@@ -1,3 +1,5 @@
+## ! THIS PROJECT IS IN EARLY STAGE OF DEVELOPMENT !
+
 # 🏋️‍♂️ Fit Track Web Application
 
 ## 🚀 Overview
