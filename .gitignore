@@ -19,8 +19,4 @@
 *.backup.json
 *.jpg
 *.png
-StrongerTogether.Server/wwwroot/uploads/c92065b1-7a04-4c10-a9c5-6409511224f3.webp
-.gitignore
-StrongerTogether.Server/wwwroot/uploads/2892fdbd-0d1d-4126-8d72-9ca6bba1b6de.webp
-StrongerTogether.Server/wwwroot/uploads/b2cfcca1-24f5-4743-a7b5-a4231d61f7f5.webp
-StrongerTogether.Server/wwwroot/uploads/8dddf0b5-23a3-4fe5-91c4-4117029e0c42.pdf
+StrongerTogether.Server/wwwroot/uploads/
