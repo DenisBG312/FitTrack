@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Footer from "./Footer"; // Import the Footer component
+import Footer from "./Footer";
+import LoadingSpinner from "./LoadingSpinner";
 
 const Register = () => {
   const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
@@ -12,10 +13,13 @@ const Register = () => {
   const [weight, setWeight] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setError(null);
 
     if (!profileImage) {
       setError("Please upload a profile image.");
@@ -30,6 +34,7 @@ const Register = () => {
     formData.append("weight", weight);
     formData.append("profileImage", profileImage);
 
+    setIsLoading(true);
     try {
       await axios.post(`${API_URL}/auth/register`, formData, {
         withCredentials: true,
@@ -37,13 +42,18 @@ const Register = () => {
       navigate("/login");
     } catch (err) {
       console.error("Registration failed:", err);
-      setError("Something went wrong. Please try again.");
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col">
-      {/* Main content area: Centered registration form */}
       <div className="flex-grow flex items-center justify-center">
         <div className="w-full max-w-md bg-gray-800 p-8 rounded-lg shadow-lg">
           <h2 className="text-3xl font-bold text-white text-center mb-6">Register</h2>
@@ -114,12 +124,16 @@ const Register = () => {
 
             {error && <p className="text-red-500 text-center">{error}</p>}
 
-            <button
-              type="submit"
-              className="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 rounded-md transition-all"
-            >
-              Register
-            </button>
+            {isLoading ? (
+              <LoadingSpinner />
+            ) : (
+              <button
+                type="submit"
+                className="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 rounded-md transition-all"
+              >
+                Register
+              </button>
+            )}
           </form>
 
           <p className="text-gray-400 text-center mt-4">

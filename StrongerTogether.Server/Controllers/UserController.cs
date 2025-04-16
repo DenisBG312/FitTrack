@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using StrongerTogether.Server.DTOs.User;
+using System.Text.RegularExpressions;
 
 namespace StrongerTogether.Server.Controllers
 {
@@ -31,6 +32,14 @@ namespace StrongerTogether.Server.Controllers
             if (await _context.Users.AnyAsync(u => u.Email == model.Email))
             {
                 return BadRequest(new { message = "Email already in use." });
+            }
+
+            var passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$";
+            var isValidPassword = Regex.IsMatch(model.Password, passwordPattern);
+
+            if (!isValidPassword)
+            {
+                return BadRequest(new { message = "Password must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number." });
             }
 
             string imageUrl = null;
