@@ -2,6 +2,9 @@
 
 # 🏋️‍♂️ Fit Track Web Application
 
+## Quick Video Demo Of The Project
+https://youtu.be/sMmttaOc2pM
+
 ## 🚀 Overview
 **FitTrack** is a modern and scalable platform designed to help users track their workouts, monitor nutrition, and visualize progress—all in one seamless experience.
 
