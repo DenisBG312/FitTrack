@@ -44,6 +44,8 @@
 
 ### 🔧 How to run the project?
 ## Backend
+[Keep in mind it is prefered to work with Visual Studio 2022 for the Back-End, because the starting api url will match the .env default api url I have pasted. If you work with Visual Studio Code you will have to manually change the .env api url.]
+
 ```sh
 git clone https://github.com/DenisBG312/FitTrack.git
 cd StrongerTogether.Server
