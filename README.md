@@ -46,7 +46,7 @@
 ## Backend
 ```sh
 git clone https://github.com/DenisBG312/FitTrack.git
-cd StrongerTogether.Client
+cd StrongerTogether.Server
 ```
 * Create a file named appsettings.json in the main directory of the project and configure your PostgreSQL connection string there.
 * In the appsettings.json you also need to configure the JWT as shown below:
