@@ -8,6 +8,10 @@ const GymList = () => {
     const [selectedTown, setSelectedTown] = useState(null);
     const [loading, setLoading] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const gymsPerPage = 10;
+    const [totalGyms, setTotalGyms] = useState(0);
+    const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
 
     const towns = [
         'Sofiya', 'Plovdiv', 'Varna', 'Burgas', 'Ruse', 'Pleven',
@@ -22,30 +26,46 @@ const GymList = () => {
 
     useEffect(() => {
         if (!selectedTown) return;
-
-        const API_URL = import.meta.env.VITE_PUBLIC_API_URL || '';
-
+    
         const fetchGyms = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`${API_URL}/Gyms/${selectedTown.toLowerCase()}`);
+                const res = await fetch(
+                    `${API_URL}/Gyms/${selectedTown.toLowerCase()}?page=${currentPage}&pageSize=${gymsPerPage}`
+                );
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
                 const data = await res.json();
-                setGyms(data);
+                setGyms(data.gyms);
+                setTotalGyms(data.totalGyms);
             } catch (err) {
                 console.error("Error fetching gyms:", err);
+                setGyms([]);
+                setTotalGyms(0);
             } finally {
                 setLoading(false);
             }
         };
-
+    
         fetchGyms();
-    }, [selectedTown]);
+    }, [selectedTown, currentPage, API_URL]);
 
     const handleTownChange = (selectedOption) => {
         const newTown = selectedOption ? selectedOption.value : null;
         if (newTown === selectedTown) return;
+
+        setCurrentPage(1);
         setSelectedTown(newTown);
         setGyms([]);
+    };
+
+    const totalPages = Math.ceil(totalGyms / gymsPerPage);
+
+    const paginate = (pageNumber) => {
+        if (pageNumber < 1 || pageNumber > totalPages) return;
+        setCurrentPage(pageNumber);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     return (
@@ -59,7 +79,7 @@ const GymList = () => {
                 }}></div>
 
             <div className="relative z-10 container mx-auto px-4 py-12">
-                <div className="text-center mb-12 transform transition-all duration-700 translate-y-0">
+                <div className="text-center mb-12">
                     <h1 className="text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 tracking-tight">
                         FitFinder Bulgaria
                     </h1>
@@ -68,7 +88,7 @@ const GymList = () => {
                     </p>
                 </div>
 
-                <div className="max-w-md mx-auto mb-16 bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 transform transition-all duration-500 hover:shadow-yellow-500/20 relative z-[1000]">
+                <div className="max-w-md mx-auto mb-16 bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700">
                     <h2 className="text-2xl font-bold mb-4 text-yellow-400">Select Your Town</h2>
                     <Select
                         value={selectedTown ? { value: selectedTown, label: selectedTown } : null}
@@ -87,10 +107,6 @@ const GymList = () => {
                                 backgroundColor: "#1A202C",
                                 color: "white",
                                 boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-                                "&:hover": {
-                                    borderColor: "#ECC94B",
-                                    boxShadow: "0 0 0 2px rgba(236, 201, 75, 0.25)",
-                                },
                                 zIndex: 10001,
                             }),
                             option: (base, state) => ({
@@ -99,11 +115,6 @@ const GymList = () => {
                                 color: state.isFocused ? "#1A202C" : "#E2E8F0",
                                 borderRadius: "4px",
                                 padding: "10px 12px",
-                                transition: "all 0.2s ease",
-                                "&:hover": {
-                                    backgroundColor: "#ECC94B",
-                                    color: "#1A202C",
-                                },
                             }),
                             singleValue: (base) => ({
                                 ...base,
@@ -114,22 +125,15 @@ const GymList = () => {
                                 ...base,
                                 backgroundColor: "#1A202C",
                                 borderRadius: "12px",
-                                overflow: "hidden",
                                 border: "1px solid #2D3748",
                                 boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15)",
                                 zIndex: 10002,
                                 position: "absolute",
                             }),
-                            menuList: (base) => ({
-                                ...base,
-                                zIndex: 10002,
-                            }),
+                            menuList: (base) => ({ ...base, zIndex: 10002 }),
                             dropdownIndicator: (base) => ({
                                 ...base,
                                 color: "#ECC94B",
-                                "&:hover": {
-                                    color: "#F6E05E",
-                                },
                             }),
                             input: (base) => ({
                                 ...base,
@@ -172,58 +176,98 @@ const GymList = () => {
                                     <p className="text-gray-400 max-w-md mx-auto">We couldn't find any gyms in {selectedTown}. Try selecting a different town or check back later.</p>
                                 </div>
                             ) : (
-                                <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                                    {gyms.map((gym, index) => (
-                                        <a
-                                            key={index}
-                                            href={gym.link}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="group bg-gray-800/40 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg border border-gray-700/50 transition-all duration-300 hover:shadow-yellow-500/30 hover:scale-105 hover:-translate-y-1 flex flex-col"
-                                            style={{
-                                                animationDelay: `${index * 100}ms`,
-                                                animation: "fadeInUp 0.6s ease-out forwards"
-                                            }}
-                                        >
-                                            <div className="relative overflow-hidden">
-                                                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-50 z-10"></div>
-                                                <img
-                                                    src={gym.imageUrl}
-                                                    alt={gym.name}
-                                                    className="w-full h-52 object-cover transition-transform duration-700 group-hover:scale-110"
-                                                    onError={(e) => {
-                                                        e.target.src = "https://cdn.oink.bg/assets/default_avatar_n.svg";
-                                                    }}
-                                                />
-                                                <div className="absolute bottom-2 right-3 z-20 bg-yellow-400 text-gray-900 font-bold px-3 py-1 rounded-full text-sm flex items-center gap-1">
-                                                    {gym.rating}
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                    </svg>
+                                <>
+                                    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                                        {gyms.map((gym, index) => (
+                                            <a
+                                                key={index}
+                                                href={gym.link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="group bg-gray-800/40 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg border border-gray-700/50 transition-all duration-300 hover:shadow-yellow-500/30 hover:scale-105 hover:-translate-y-1 flex flex-col"
+                                            >
+                                                <div className="relative overflow-hidden">
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-50 z-10"></div>
+                                                    <img
+                                                        src={gym.imageUrl}
+                                                        alt={gym.name}
+                                                        className="w-full h-52 object-cover transition-transform duration-700 group-hover:scale-110"
+                                                        onError={(e) => {
+                                                            e.target.src = "https://cdn.oink.bg/assets/default_avatar_n.svg";
+                                                        }}
+                                                    />
+                                                    <div className="absolute bottom-2 right-3 z-20 bg-yellow-400 text-gray-900 font-bold px-3 py-1 rounded-full text-sm flex items-center gap-1">
+                                                        {gym.rating}
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                        </svg>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="p-5 flex flex-col flex-grow">
-                                                <h3 className="text-xl font-bold mb-2 text-white group-hover:text-yellow-400 transition-colors duration-300">{gym.name}</h3>
+                                                <div className="p-5 flex flex-col flex-grow">
+                                                    <h3 className="text-xl font-bold mb-2 text-white group-hover:text-yellow-400 transition-colors duration-300">{gym.name}</h3>
+                                                    <div className="mt-auto pt-4 flex justify-between items-center">
+                                                        <span className="inline-flex items-center text-sm font-medium text-gray-400">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            </svg>
+                                                            {selectedTown}
+                                                        </span>
+                                                        <span className="text-yellow-400 text-sm font-medium group-hover:translate-x-1 transition-transform duration-300 inline-flex items-center">
+                                                            View Details
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                            </svg>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        ))}
+                                    </div>
 
-                                                <div className="mt-auto pt-4 flex justify-between items-center">
-                                                    <span className="inline-flex items-center text-sm font-medium text-gray-400">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                        </svg>
-                                                        {selectedTown}
-                                                    </span>
-                                                    <span className="text-yellow-400 text-sm font-medium group-hover:translate-x-1 transition-transform duration-300 inline-flex items-center">
-                                                        View Details
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                                        </svg>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    ))}
-                                </div>
+                                    {totalPages > 1 && (
+                                        <div className="mt-10 flex justify-center items-center gap-2 flex-wrap">
+                                            <button
+                                                onClick={() => paginate(currentPage - 1)}
+                                                disabled={currentPage === 1}
+                                                className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${currentPage === 1 ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-700 text-white hover:bg-yellow-500 hover:text-gray-900'}`}
+                                            >
+                                                Previous
+                                            </button>
+                                            
+                                            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                                let pageNum;
+                                                if (totalPages <= 5) {
+                                                    pageNum = i + 1;
+                                                } else if (currentPage <= 3) {
+                                                    pageNum = i + 1;
+                                                } else if (currentPage >= totalPages - 2) {
+                                                    pageNum = totalPages - 4 + i;
+                                                } else {
+                                                    pageNum = currentPage - 2 + i;
+                                                }
+                                                
+                                                return (
+                                                    <button
+                                                        key={pageNum}
+                                                        onClick={() => paginate(pageNum)}
+                                                        className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${pageNum === currentPage ? 'bg-yellow-400 text-gray-900' : 'bg-gray-700 text-white hover:bg-yellow-500 hover:text-gray-900'}`}
+                                                    >
+                                                        {pageNum}
+                                                    </button>
+                                                );
+                                            })}
+
+                                            <button
+                                                onClick={() => paginate(currentPage + 1)}
+                                                disabled={currentPage === totalPages}
+                                                className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${currentPage === totalPages ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-700 text-white hover:bg-yellow-500 hover:text-gray-900'}`}
+                                            >
+                                                Next
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </>
                     )}

@@ -17,7 +17,7 @@ namespace StrongerTogether.Server.Controllers
         }
 
         [HttpGet("{location}")]
-        public async Task<IActionResult> GetGymsInLocation(string location)
+        public async Task<IActionResult> GetGymsInLocation(string location, int page = 1, int pageSize = 10)
         {
             var url = $"https://www.oink.bg/search/{HttpUtility.UrlEncode(location)}/fitnes-klub?sort=1";
 
@@ -67,7 +67,18 @@ namespace StrongerTogether.Server.Controllers
                     }
                 }
 
-                return Ok(gyms);
+                var pagedGyms = gyms
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                return Ok(new
+                {
+                    TotalGyms = gyms.Count,
+                    Page = page,
+                    PageSize = pageSize,
+                    Gyms = pagedGyms
+                });
             }
             catch (Exception ex)
             {

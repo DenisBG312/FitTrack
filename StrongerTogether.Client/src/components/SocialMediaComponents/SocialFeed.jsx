@@ -8,7 +8,6 @@ import { HeartIcon as HeartSolidIcon, BookmarkIcon as BookmarkSolidIcon } from "
 import moment from "moment";
 import axios from "axios";
 import CreatePostModal from "./CreatePostModal";
-// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence, useScroll, useTransform, useMotionTemplate, useSpring } from "framer-motion";
 import Footer from "../Footer";
 import LoadingSpinner from "../LoadingSpinner";
@@ -177,7 +176,7 @@ const SocialFeed = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen bg-white dark:bg-gray-900">
+      <div className="flex flex-col justify-center items-center h-screen bg-gray-900">
         <LoadingSpinner />
       </div>
     );
@@ -188,7 +187,7 @@ const SocialFeed = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-md mx-auto mt-16 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg"
+        className="max-w-md mx-auto mt-16 p-6 bg-gray-800 rounded-xl shadow-lg"
       >
         <motion.div
           initial={{ scale: 1 }}
@@ -207,7 +206,7 @@ const SocialFeed = () => {
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           onClick={fetchPosts}
-          className="w-full bg-gradient-to-r from-white-500 to-white-600 hover:from-white-600 hover:to-white-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-300 shadow-md text-sm"
+          className="w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-300 shadow-md text-sm"
         >
           Try Again
         </motion.button>
@@ -240,10 +239,10 @@ const SocialFeed = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900" ref={feedRef}>
+    <div className="min-h-screen bg-gray-900" ref={feedRef}>
       <motion.div
         ref={headerRef}
-        className="sticky top-0 z-20 bg-white dark:bg-gray-900"
+        className="sticky top-0 z-20 bg-gray-900"
         style={{
           opacity: headerOpacity,
           backdropFilter: headerBackdropStyle
@@ -258,22 +257,22 @@ const SocialFeed = () => {
       </motion.div>
 
       <div className="max-w-xl mx-auto px-4 pb-10">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden mb-4 border border-gray-200 dark:border-gray-700">
+        <div className="bg-gray-800 rounded-lg shadow overflow-hidden mb-4 border border-gray-700">
           <div className="p-4">
             <div className="flex items-center gap-3">
               <img 
                 src={currentUser?.profileImageUrl || "/default-avatar.png"} 
                 alt={currentUser?.username || "Your profile"}
-                className="h-10 w-10 rounded-full object-cover border border-gray-200 dark:border-gray-700"
+                className="h-10 w-10 rounded-full object-cover border border-gray-700"
               />
               <motion.div 
-                className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full py-2.5 px-4 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                className="flex-1 bg-gray-700 rounded-full py-2.5 px-4 cursor-pointer hover:bg-gray-600 transition-colors"
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
                 onClick={() => setShowCreateModal(true)}
               >
-                <span className="text-gray-500 dark:text-gray-400 text-sm">
-                  What's on your mind, {currentUser.username}?
+                <span className="text-gray-400 text-sm">
+                  What's on your mind, {currentUser?.username || 'User'}?
                 </span>
               </motion.div>
             </div>
@@ -296,7 +295,7 @@ const SocialFeed = () => {
               className="flex flex-col items-center justify-center py-16 text-center"
             >
               <motion.div
-                className="text-white-500 mb-5 relative"
+                className="text-yellow-500 mb-5 relative"
                 animate={{
                   rotate: [0, 3, 0, -3, 0],
                 }}
@@ -316,8 +315,8 @@ const SocialFeed = () => {
                 />
               </motion.div>
 
-              <h3 className="text-xl font-medium mb-2 text-gray-800 dark:text-gray-100">No posts found</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-xs text-sm">
+              <h3 className="text-xl font-medium mb-2 text-gray-100">No posts found</h3>
+              <p className="text-gray-400 mb-6 max-w-xs text-sm">
                 There are no posts in your feed yet. Be the first one to share!
               </p>
 
@@ -342,7 +341,7 @@ const SocialFeed = () => {
                   key={post.id}
                   variants={itemVariants}
                   layoutId={`post-${post.id}`}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300"
+                  className="bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-700 hover:border-gray-600 transition-all duration-300"
                   onClick={() => navigate(`/posts/${post.id}`)}
                 >
                   <div className="p-4">
@@ -359,11 +358,11 @@ const SocialFeed = () => {
                           <img
                             src={post.user?.profileImageUrl || "/default-avatar.png"}
                             alt={post.user?.username || "Unknown User"}
-                            className="h-10 w-10 rounded-full object-cover border border-gray-200 dark:border-gray-700"
+                            className="h-10 w-10 rounded-full object-cover border border-gray-700"
                           />
                         </motion.div>
                         <div>
-                          <p className="font-medium group-hover:text-white-500 transition-colors duration-200 text-sm">
+                          <p className="font-medium group-hover:text-yellow-500 transition-colors duration-200 text-sm text-gray-100">
                             {post.user?.username || "Unknown User"}
                           </p>
                           <p className="text-gray-500 text-xs">
@@ -374,8 +373,8 @@ const SocialFeed = () => {
                     </div>
 
                     <div className="mb-3">
-                      <h3 className="text-lg font-medium mb-1.5 text-gray-900 dark:text-gray-100">{post.title}</h3>
-                      <p className="text-gray-700 dark:text-gray-300 text-sm whitespace-pre-line leading-relaxed">{post.content}</p>
+                      <h3 className="text-lg font-medium mb-1.5 text-gray-100">{post.title}</h3>
+                      <p className="text-gray-300 text-sm whitespace-pre-line leading-relaxed">{post.content}</p>
                     </div>
 
                     {post.imageUrl && (
@@ -399,29 +398,29 @@ const SocialFeed = () => {
                         initial={{ y: 5, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.1, duration: 0.3 }}
-                        className="bg-gray-100 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600/50 rounded-lg p-3 mb-3"
+                        className="bg-gray-700/50 border border-gray-600/50 rounded-lg p-3 mb-3"
                       >
                         {post.workout && post.nutritionLog ? (
                           <div className="space-y-3">
                             <div className="flex items-start">
-                              <div className="flex-shrink-0 bg-yellow-100 dark:bg-yellow-500/20 p-1.5 rounded-md mr-2.5">
+                              <div className="flex-shrink-0 bg-yellow-500/20 p-1.5 rounded-md mr-2.5">
                                 <span className="text-lg">🏋️</span>
                               </div>
                               <div className="flex-1">
-                                <h4 className="font-medium text-yellow-500 dark:text-yellow-400 text-xs mb-0.5">Workout</h4>
-                                <p className="text-xs text-yellow-700 dark:text-gray-200">
+                                <h4 className="font-medium text-yellow-400 text-xs mb-0.5">Workout</h4>
+                                <p className="text-xs text-gray-200">
                                   {post.workout.title} · {post.workout.duration} mins
                                 </p>
                               </div>
                             </div>
 
                             <div className="flex items-start">
-                              <div className="flex-shrink-0 bg-green-100 dark:bg-green-500/20 p-1.5 rounded-md mr-2.5">
+                              <div className="flex-shrink-0 bg-green-500/20 p-1.5 rounded-md mr-2.5">
                                 <span className="text-lg">🥗</span>
                               </div>
                               <div className="flex-1">
-                                <h4 className="font-medium text-green-600 dark:text-green-400 text-xs mb-0.5">Nutrition</h4>
-                                <p className="text-xs text-gray-700 dark:text-gray-200">
+                                <h4 className="font-medium text-green-400 text-xs mb-0.5">Nutrition</h4>
+                                <p className="text-xs text-gray-200">
                                   {post.nutritionLog.foodName} · {post.nutritionLog.calories} kcal
                                 </p>
                               </div>
@@ -429,24 +428,24 @@ const SocialFeed = () => {
                           </div>
                         ) : post.workout ? (
                           <div className="flex items-start">
-                            <div className="flex-shrink-0 bg-yellow-100 dark:bg-yellow-500/20 p-1.5 rounded-md mr-2.5">
+                            <div className="flex-shrink-0 bg-yellow-500/20 p-1.5 rounded-md mr-2.5">
                               <span className="text-lg">🏋️</span>
                             </div>
                             <div>
-                              <h4 className="font-medium text-white-600 dark:text-white-400 text-xs mb-0.5">Workout</h4>
-                              <p className="text-xs text-gray-700 dark:text-gray-200">
+                              <h4 className="font-medium text-yellow-400 text-xs mb-0.5">Workout</h4>
+                              <p className="text-xs text-gray-200">
                                 {post.workout.title} · {post.workout.duration} mins
                               </p>
                             </div>
                           </div>
                         ) : (
                           <div className="flex items-start">
-                            <div className="flex-shrink-0 bg-green-100 dark:bg-green-500/20 p-1.5 rounded-md mr-2.5">
+                            <div className="flex-shrink-0 bg-green-500/20 p-1.5 rounded-md mr-2.5">
                               <span className="text-lg">🥗</span>
                             </div>
                             <div>
-                              <h4 className="font-medium text-green-600 dark:text-green-400 text-xs mb-0.5">Nutrition</h4>
-                              <p className="text-xs text-gray-700 dark:text-gray-200">
+                              <h4 className="font-medium text-green-400 text-xs mb-0.5">Nutrition</h4>
+                              <p className="text-xs text-gray-200">
                                 {post.nutritionLog.foodName} · {post.nutritionLog.calories} kcal
                               </p>
                             </div>
@@ -455,7 +454,7 @@ const SocialFeed = () => {
                       </motion.div>
                     )}
 
-                    <div className="flex items-center justify-between text-gray-500 pt-2 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center justify-between text-gray-500 pt-2 border-t border-gray-700">
                       <div className="flex gap-4">
                         <motion.button
                           whileTap={{ scale: 1.2 }}
@@ -475,12 +474,14 @@ const SocialFeed = () => {
                           ) : (
                             <HeartIcon className="h-5 w-5 group-hover:text-red-500 transition-colors" />
                           )}
-                          <span className="text-xs group-hover:text-red-500">{post.likes.length}</span>
+                          <span className="text-xs group-hover:text-red-500 text-gray-400">
+                            {post.likes.length}
+                          </span>
                         </motion.button>
 
                         <div className="flex items-center gap-1.5 transition-colors duration-200 group">
                           <ChatBubbleLeftIcon className="h-5 w-5" />
-                          <span className="text-xs">{post.comments.length}</span>
+                          <span className="text-xs text-gray-400">{post.comments.length}</span>
                         </div>
                       </div>
                     </div>
