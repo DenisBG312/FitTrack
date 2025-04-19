@@ -47,7 +47,7 @@ const NavBar = ({ isAuthenticated, username, handleLogout }) => {
 
           {isAuthenticated && (
             <Link
-              to="/gyms-in-ruse"
+              to="/gyms"
               className="relative group flex items-center gap-2 font-medium text-gray-200 hover:text-white"
             >
               <FaCompass size={18} className="text-yellow-500 group-hover:animate-pulse" />
@@ -216,7 +216,7 @@ const NavBar = ({ isAuthenticated, username, handleLogout }) => {
           {isAuthenticated && (
             <>
               <Link
-                to="/gyms-in-ruse"
+                to="/gyms"
                 className="flex items-center gap-2 py-3 px-3 rounded-lg hover:bg-gray-700 transition-colors duration-200"
                 onClick={() => setMobileMenuOpen(false)}
               >

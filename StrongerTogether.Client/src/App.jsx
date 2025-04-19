@@ -58,7 +58,7 @@ const App = () => {
         <Route path="/community" element={<SocialFeed />} />
         <Route path="/nutritions" element={<ProtectedRoute element={<Nutritions />} />} />
         <Route path="/posts/:postId" element={<PostDetails />} />
-        <Route path="/gyms-in-ruse" element={<ProtectedRoute element={<GymList />} />} />
+        <Route path="/gyms" element={<ProtectedRoute element={<GymList />} />} />
       </Routes>
     </div>
   );

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Select from "react-select";
+import { motion, AnimatePresence } from "framer-motion";
 import LoadingSpinner from "./LoadingSpinner";
 import Footer from "./Footer";
 
@@ -7,11 +8,13 @@ const GymList = () => {
     const [gyms, setGyms] = useState([]);
     const [selectedTown, setSelectedTown] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const [isVisible, setIsVisible] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const gymsPerPage = 9;
     const [totalGyms, setTotalGyms] = useState(0);
     const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
+    const containerRef = useRef(null);
 
     const towns = [
         'Sofiya', 'Plovdiv', 'Varna', 'Burgas', 'Ruse', 'Pleven',
@@ -29,18 +32,20 @@ const GymList = () => {
     
         const fetchGyms = async () => {
             setLoading(true);
+            setError(null);
             try {
                 const res = await fetch(
                     `${API_URL}/Gyms/${selectedTown.toLowerCase()}?page=${currentPage}&pageSize=${gymsPerPage}`
                 );
                 if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
+                    throw new Error(`Failed to load gyms for ${selectedTown}`);
                 }
                 const data = await res.json();
                 setGyms(data.gyms);
                 setTotalGyms(data.totalGyms);
             } catch (err) {
                 console.error("Error fetching gyms:", err);
+                setError(err.message || "Failed to load gyms");
                 setGyms([]);
                 setTotalGyms(0);
             } finally {
@@ -48,7 +53,9 @@ const GymList = () => {
             }
         };
     
-        fetchGyms();
+        // Add a small delay to show loading spinner (better UX)
+        const timer = setTimeout(fetchGyms, 150);
+        return () => clearTimeout(timer);
     }, [selectedTown, currentPage, API_URL]);
 
     const handleTownChange = (selectedOption) => {
@@ -58,6 +65,7 @@ const GymList = () => {
         setCurrentPage(1);
         setSelectedTown(newTown);
         setGyms([]);
+        setError(null);
     };
 
     const totalPages = Math.ceil(totalGyms / gymsPerPage);
@@ -68,8 +76,73 @@ const GymList = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.05,
+                delayChildren: 0.1
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 15 },
+        show: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                type: "spring",
+                damping: 20,
+                stiffness: 300
+            }
+        }
+    };
+
+    if (error) {
+        return (
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="max-w-md mx-auto mt-16 p-6 bg-gray-800 rounded-xl shadow-lg"
+            >
+                <motion.div
+                    initial={{ scale: 1 }}
+                    animate={{ scale: [1, 1.05, 1] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                    className="w-16 h-16 bg-red-500/20 rounded-full mx-auto mb-4 flex items-center justify-center"
+                >
+                    <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </motion.div>
+                <div className="text-red-500 text-base mb-4 text-center font-medium">
+                    {error}
+                </div>
+                <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => {
+                        setError(null);
+                        if (selectedTown) {
+                            setCurrentPage(1);
+                            setGyms([]);
+                        }
+                    }}
+                    className="w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-300 shadow-md text-sm"
+                >
+                    Try Again
+                </motion.button>
+            </motion.div>
+        );
+    }
+
     return (
-        <div className={`min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'} relative`}>
+        <div 
+            className={`min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'} relative`}
+            ref={containerRef}
+        >
             <div className="fixed inset-0 w-full h-full bg-black opacity-10 z-0"
                 style={{ 
                     backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
@@ -145,16 +218,30 @@ const GymList = () => {
 
                 <div className="mt-8">
                     {selectedTown === null ? (
-                        <div className="text-center py-16 max-w-2xl mx-auto">
-                            <div className="animate-float inline-block mb-6">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="text-center py-16 max-w-2xl mx-auto"
+                        >
+                            <motion.div 
+                                className="animate-float inline-block mb-6"
+                                animate={{
+                                    y: [0, -10, 0],
+                                }}
+                                transition={{
+                                    duration: 3,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }}
+                            >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-yellow-400 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
-                            </div>
+                            </motion.div>
                             <h2 className="text-2xl font-bold mb-4 text-yellow-400">Choose a town to get started</h2>
                             <p className="text-gray-400">Select your town from the dropdown above to discover the best gyms in your area</p>
-                        </div>
+                        </motion.div>
                     ) : (
                         <>
                             <div className="flex items-center justify-center mb-12">
@@ -165,26 +252,47 @@ const GymList = () => {
                                 <div className="h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent w-full"></div>
                             </div>
 
-                            {loading ? (
-                                <LoadingSpinner />
-                            ) : gyms.length === 0 ? (
-                                <div className="text-center py-16 bg-gray-800/50 rounded-2xl border border-gray-700">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto mb-4 text-yellow-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <h3 className="text-xl font-semibold mb-2 text-yellow-400">No gyms found</h3>
-                                    <p className="text-gray-400 max-w-md mx-auto">We couldn't find any gyms in {selectedTown}. Try selecting a different town or check back later.</p>
-                                </div>
-                            ) : (
-                                <>
-                                    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                            <AnimatePresence mode="wait">
+                                {loading ? (
+                                    <motion.div
+                                        key="loading"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        className="flex justify-center py-16"
+                                    >
+                                        <LoadingSpinner />
+                                    </motion.div>
+                                ) : gyms.length === 0 ? (
+                                    <motion.div
+                                        key="empty"
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="text-center py-16 bg-gray-800/50 rounded-2xl border border-gray-700"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto mb-4 text-yellow-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <h3 className="text-xl font-semibold mb-2 text-yellow-400">No gyms found</h3>
+                                        <p className="text-gray-400 max-w-md mx-auto">We couldn't find any gyms in {selectedTown}. Try selecting a different town or check back later.</p>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        key="gyms"
+                                        variants={containerVariants}
+                                        initial="hidden"
+                                        animate="show"
+                                        className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
+                                    >
                                         {gyms.map((gym, index) => (
-                                            <a
+                                            <motion.a
                                                 key={index}
+                                                variants={itemVariants}
                                                 href={gym.link}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="group bg-gray-800/40 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg border border-gray-700/50 transition-all duration-300 hover:shadow-yellow-500/30 hover:scale-105 hover:-translate-y-1 flex flex-col"
+                                                whileHover={{ scale: 1.02 }}
                                             >
                                                 <div className="relative overflow-hidden">
                                                     <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-50 z-10"></div>
@@ -221,53 +329,59 @@ const GymList = () => {
                                                         </span>
                                                     </div>
                                                 </div>
-                                            </a>
+                                            </motion.a>
                                         ))}
-                                    </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
 
-                                    {totalPages > 1 && (
-                                        <div className="mt-10 flex justify-center items-center gap-2 flex-wrap">
-                                            <button
-                                                onClick={() => paginate(currentPage - 1)}
-                                                disabled={currentPage === 1}
-                                                className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${currentPage === 1 ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-700 text-white hover:bg-yellow-500 hover:text-gray-900'}`}
+                            {totalPages > 1 && !loading && (
+                                <motion.div 
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="mt-10 flex justify-center items-center gap-2 flex-wrap"
+                                >
+                                    <button
+                                        onClick={() => paginate(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                        className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${currentPage === 1 ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-700 text-white hover:bg-yellow-500 hover:text-gray-900'}`}
+                                    >
+                                        Previous
+                                    </button>
+                                    
+                                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                        let pageNum;
+                                        if (totalPages <= 5) {
+                                            pageNum = i + 1;
+                                        } else if (currentPage <= 3) {
+                                            pageNum = i + 1;
+                                        } else if (currentPage >= totalPages - 2) {
+                                            pageNum = totalPages - 4 + i;
+                                        } else {
+                                            pageNum = currentPage - 2 + i;
+                                        }
+                                        
+                                        return (
+                                            <motion.button
+                                                key={pageNum}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={() => paginate(pageNum)}
+                                                className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${pageNum === currentPage ? 'bg-yellow-400 text-gray-900' : 'bg-gray-700 text-white hover:bg-yellow-500 hover:text-gray-900'}`}
                                             >
-                                                Previous
-                                            </button>
-                                            
-                                            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                                let pageNum;
-                                                if (totalPages <= 5) {
-                                                    pageNum = i + 1;
-                                                } else if (currentPage <= 3) {
-                                                    pageNum = i + 1;
-                                                } else if (currentPage >= totalPages - 2) {
-                                                    pageNum = totalPages - 4 + i;
-                                                } else {
-                                                    pageNum = currentPage - 2 + i;
-                                                }
-                                                
-                                                return (
-                                                    <button
-                                                        key={pageNum}
-                                                        onClick={() => paginate(pageNum)}
-                                                        className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${pageNum === currentPage ? 'bg-yellow-400 text-gray-900' : 'bg-gray-700 text-white hover:bg-yellow-500 hover:text-gray-900'}`}
-                                                    >
-                                                        {pageNum}
-                                                    </button>
-                                                );
-                                            })}
+                                                {pageNum}
+                                            </motion.button>
+                                        );
+                                    })}
 
-                                            <button
-                                                onClick={() => paginate(currentPage + 1)}
-                                                disabled={currentPage === totalPages}
-                                                className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${currentPage === totalPages ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-700 text-white hover:bg-yellow-500 hover:text-gray-900'}`}
-                                            >
-                                                Next
-                                            </button>
-                                        </div>
-                                    )}
-                                </>
+                                    <button
+                                        onClick={() => paginate(currentPage + 1)}
+                                        disabled={currentPage === totalPages}
+                                        className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${currentPage === totalPages ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-700 text-white hover:bg-yellow-500 hover:text-gray-900'}`}
+                                    >
+                                        Next
+                                    </button>
+                                </motion.div>
                             )}
                         </>
                     )}
