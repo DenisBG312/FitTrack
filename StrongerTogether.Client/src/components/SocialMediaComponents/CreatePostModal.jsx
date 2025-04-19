@@ -18,6 +18,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
   const [nutritions, setNutritions] = useState([]);
   const [loadingWorkouts, setLoadingWorkouts] = useState(false);
   const [loadingNutritions, setLoadingNutritions] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -99,11 +100,43 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
     }));
   };
 
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      if (file.type.startsWith("image/")) {
+        setFormData(prev => ({ ...prev, imageFile: file }));
+      } else {
+        setError("Please upload an image file (PNG, JPG, JPEG)");
+      }
+    }
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setFormData({ ...formData, imageFile: e.target.files[0] });
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
-  <div className="bg-gray-800 rounded-xl w-full max-w-lg p-6 relative shadow-xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-gray-800 rounded-xl w-full max-w-lg p-6 relative shadow-xl max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
@@ -112,7 +145,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
           <XMarkIcon className="h-6 w-6" />
         </button>
 
-        <h2 className="text-2xl font-bold mb-6 text-white">Create New Post</h2>
+        <h2 className="text-2xl font-bold mb-6 text-white">Create Post</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -145,7 +178,6 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
             />
           </div>
 
-          {/* Workout Selection Dropdown */}
           <div>
             <label className="block text-sm font-medium mb-2 text-gray-300">
               Link Workout (Optional)
@@ -170,7 +202,6 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
             </select>
           </div>
 
-          {/* Nutrition Log Selection Dropdown */}
           <div>
             <label className="block text-sm font-medium mb-2 text-gray-300">
               Link Nutrition Log (Optional)
@@ -195,19 +226,25 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
             </select>
           </div>
 
-          {/* Image Upload Section */}
           <div className="space-y-3">
             <label className="block text-sm font-medium text-gray-300">
               Add Media (Optional)
             </label>
             <div className="flex items-center justify-center w-full">
-              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-600 rounded-lg cursor-pointer hover:border-yellow-500 hover:bg-gray-700/30 transition-all duration-200 group">
+              <label 
+                className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-all duration-200 group
+                  ${dragActive ? "border-yellow-500 bg-gray-700/50" : "border-gray-600 hover:border-yellow-500 hover:bg-gray-700/30"}`}
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+              >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <ArrowUpTrayIcon className="h-8 w-8 text-gray-400 group-hover:text-yellow-500 mb-2 transition-colors" />
-                  <p className="text-sm text-gray-400 group-hover:text-yellow-500 transition-colors">
+                  <ArrowUpTrayIcon className={`h-8 w-8 mb-2 transition-colors ${dragActive ? "text-yellow-500" : "text-gray-400 group-hover:text-yellow-500"}`} />
+                  <p className={`text-sm transition-colors ${dragActive ? "text-yellow-500" : "text-gray-400 group-hover:text-yellow-500"}`}>
                     Click to upload or drag and drop
                   </p>
-                  <p className="text-xs text-gray-500 group-hover:text-yellow-600 transition-colors mt-1">
+                  <p className={`text-xs mt-1 transition-colors ${dragActive ? "text-yellow-600" : "text-gray-500 group-hover:text-yellow-600"}`}>
                     PNG, JPG, JPEG (MAX. 5MB)
                   </p>
                 </div>
@@ -215,7 +252,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => setFormData({ ...formData, imageFile: e.target.files[0] })}
+                  onChange={handleFileChange}
                 />
               </label>
             </div>

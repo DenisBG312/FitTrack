@@ -277,6 +277,37 @@ namespace StrongerTogether.Server.Controllers
             return Ok(new { likes });
         }
 
+        [HttpDelete("{postId}/like")]
+        public async Task<IActionResult> RemoveLike(Guid postId)
+        {
+            var userId = GetUserIdFromJwt();
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("User not authenticated.");
+            }
+
+            var post = await _context.Posts
+                .Include(p => p.Likes)
+                .FirstOrDefaultAsync(p => p.Id == postId);
+
+            if (post == null)
+            {
+                return NotFound("Post not found.");
+            }
+
+            var existingLike = post.Likes.FirstOrDefault(l => l.UserId == userId);
+
+            if (existingLike == null)
+            {
+                return BadRequest("You haven't liked this post.");
+            }
+
+            post.Likes.Remove(existingLike);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Like removed successfully." });
+        }
+
 
         private Guid GetUserIdFromJwt()
         {
