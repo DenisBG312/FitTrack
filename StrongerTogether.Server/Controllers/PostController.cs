@@ -40,6 +40,7 @@ namespace StrongerTogether.Server.Controllers
                 {
                     p.Id,
                     p.UserId,
+                    p.Title,
                     User = new
                     {
                         p.User.Id,
@@ -106,6 +107,7 @@ namespace StrongerTogether.Server.Controllers
             {
                 post.Id,
                 post.UserId,
+                post.Title,
                 User = new
                 {
                     post.User.Id,
@@ -215,7 +217,8 @@ namespace StrongerTogether.Server.Controllers
                 Content = model.Content,
                 ImageUrl = imageUrl,
                 WorkoutId = model.WorkoutId,
-                NutritionLogId = model.NutritionLogId
+                NutritionLogId = model.NutritionLogId,
+                Title = model.Title,
             };
 
             _context.Posts.Add(post);

@@ -14,6 +14,10 @@ namespace StrongerTogether.Server.Models
         [ForeignKey(nameof(UserId))]
         public User User { get; set; }
         [Required]
+        [Column("title")]
+        [StringLength(100)]
+        public string Title { get; set; } = string.Empty;
+        [Required]
         [Column("content")]
         [StringLength(400)]
         public string Content { get; set; } = string.Empty;
