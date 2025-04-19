@@ -25,7 +25,7 @@ namespace StrongerTogether.Server.Data.Configuration
                 CreatedAt = DateTime.UtcNow,
                 Username = "Admin",
                 Role = "Admin",
-                ProfileImageUrl = "https://cdn2.iconfinder.com/data/icons/user-23/512/User_Administrator_1.png"
+                ProfileImageUrl = "/seed_uploads/admin.png"
             };
 
             var user = new User()
@@ -37,7 +37,7 @@ namespace StrongerTogether.Server.Data.Configuration
                 CreatedAt = DateTime.UtcNow,
                 Username = "JohnFit",
                 Role = "User",
-                ProfileImageUrl = "https://www.collabs.io/mag/content/images/2024/03/S23_19e64968-d29f-40b7-9dc8-fb91f3564577_1024x.webp"
+                ProfileImageUrl = "/seed_uploads/user.jpg"
             };
 
             admin.Password = BCrypt.Net.BCrypt.HashPassword("Admin123!");

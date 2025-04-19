@@ -18,8 +18,8 @@ namespace StrongerTogether.Server.Migrations
                 columns: new[] { "id", "created_at", "email", "height", "password", "profile_image_url", "role", "username", "weight" },
                 values: new object[,]
                 {
-                    { new Guid("20f75c7d-625e-45a8-8b4e-501810e94160"), new DateTime(2025, 4, 15, 19, 28, 29, 65, DateTimeKind.Utc).AddTicks(7231), "user@gmail.com", 178m, "$2a$11$jekPckEm1eapoHNQZAiuq.ReuQF5NO62CCvOekmTnfoKn7LWdPxtC", "https://www.collabs.io/mag/content/images/2024/03/S23_19e64968-d29f-40b7-9dc8-fb91f3564577_1024x.webp", "User", "JohnFit", 86m },
-                    { new Guid("dc0372c1-6da4-4c61-a84b-8c6af860b77c"), new DateTime(2025, 4, 15, 19, 28, 29, 65, DateTimeKind.Utc).AddTicks(7226), "admin@gmail.com", 189m, "$2a$11$/LkXU8A7serq/K/jZycfBOw4CgiB/Tbfimbp1yKlII.V6aLMilDnq", "https://cdn2.iconfinder.com/data/icons/user-23/512/User_Administrator_1.png", "Admin", "Admin", 78m }
+                    { new Guid("20f75c7d-625e-45a8-8b4e-501810e94160"), new DateTime(2025, 4, 19, 13, 27, 26, 838, DateTimeKind.Utc).AddTicks(1170), "user@gmail.com", 178m, "$2a$11$Uf7k7N7pDbGMJqW3RR9d2.FvCoGUsVNZkalBHDGbQ82OKPwFlJy5u", "/seed_uploads/user.jpg", "User", "JohnFit", 86m },
+                    { new Guid("dc0372c1-6da4-4c61-a84b-8c6af860b77c"), new DateTime(2025, 4, 19, 13, 27, 26, 838, DateTimeKind.Utc).AddTicks(1166), "admin@gmail.com", 189m, "$2a$11$Y1eDJUwFvlHbzn7oPiq3e.x.H.bjeJJ2ZiEjetfoYOewoC9xZ3FpG", "/seed_uploads/admin.png", "Admin", "Admin", 78m }
                 });
         }
 

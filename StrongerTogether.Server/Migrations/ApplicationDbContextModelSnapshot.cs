@@ -252,11 +252,11 @@ namespace StrongerTogether.Server.Migrations
                         new
                         {
                             Id = new Guid("dc0372c1-6da4-4c61-a84b-8c6af860b77c"),
-                            CreatedAt = new DateTime(2025, 4, 16, 13, 16, 28, 982, DateTimeKind.Utc).AddTicks(7185),
+                            CreatedAt = new DateTime(2025, 4, 19, 13, 32, 35, 604, DateTimeKind.Utc).AddTicks(6421),
                             Email = "admin@gmail.com",
                             Height = 189m,
-                            Password = "$2a$11$Wvj9vI91BT6/GKfFHHPAGOyz0i2MJEmoaK2ODN1qoGnNjFNz35ddS",
-                            ProfileImageUrl = "https://cdn2.iconfinder.com/data/icons/user-23/512/User_Administrator_1.png",
+                            Password = "$2a$11$A1XLfVJOcIS0upcEd/5NyucdFh/TeTuf6Tjmf.lX2RAHJbjVMz1QC",
+                            ProfileImageUrl = "/seed_uploads/admin.png",
                             Role = "Admin",
                             Username = "Admin",
                             Weight = 78m
@@ -264,11 +264,11 @@ namespace StrongerTogether.Server.Migrations
                         new
                         {
                             Id = new Guid("20f75c7d-625e-45a8-8b4e-501810e94160"),
-                            CreatedAt = new DateTime(2025, 4, 16, 13, 16, 28, 982, DateTimeKind.Utc).AddTicks(7192),
+                            CreatedAt = new DateTime(2025, 4, 19, 13, 32, 35, 604, DateTimeKind.Utc).AddTicks(6424),
                             Email = "user@gmail.com",
                             Height = 178m,
-                            Password = "$2a$11$Rg5za4gKebAAuBTcH35GiO4.W0s9r9/8VdttsNyL32LVnGnA1LW5a",
-                            ProfileImageUrl = "https://www.collabs.io/mag/content/images/2024/03/S23_19e64968-d29f-40b7-9dc8-fb91f3564577_1024x.webp",
+                            Password = "$2a$11$8GCMfgbOSqSVRqYAs3Mb0eG6vd/Be5iGxOlpOyENy2MYrCBFBe/CO",
+                            ProfileImageUrl = "/seed_uploads/user.jpg",
                             Role = "User",
                             Username = "JohnFit",
                             Weight = 86m
@@ -331,9 +331,9 @@ namespace StrongerTogether.Server.Migrations
                         new
                         {
                             Id = new Guid("3ee02889-3097-4d1e-82b8-88e54fea642e"),
-                            CreatedAt = new DateTime(2025, 4, 16, 13, 16, 29, 255, DateTimeKind.Utc).AddTicks(3664),
+                            CreatedAt = new DateTime(2025, 4, 19, 13, 32, 35, 864, DateTimeKind.Utc).AddTicks(4145),
                             Description = "Grab the bar shoulder width apart with a supinated grip (palms facing you). With your body hanging and arms fully extended, pull yourself up until your chin is past the bar. Slowly return to starting position. Repeat.",
-                            Difficulty = "Intermidiate",
+                            Difficulty = "Intermediate",
                             Duration = 25,
                             TargetMuscles = "Back",
                             Title = "Chin Ups",
@@ -343,7 +343,7 @@ namespace StrongerTogether.Server.Migrations
                         new
                         {
                             Id = new Guid("15858f90-da40-4356-838e-c9704f48006e"),
-                            CreatedAt = new DateTime(2025, 4, 16, 13, 16, 29, 255, DateTimeKind.Utc).AddTicks(3686),
+                            CreatedAt = new DateTime(2025, 4, 19, 13, 32, 35, 864, DateTimeKind.Utc).AddTicks(4163),
                             Description = "Stand up straight with a dumbbell in each hand at arm's length. Raise one dumbbell and twist your forearm until it is vertical and your palm faces the shoulder. Lower to original position and repeat with opposite arm.",
                             Difficulty = "Beginner",
                             Duration = 25,

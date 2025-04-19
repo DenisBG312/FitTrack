@@ -23,7 +23,7 @@ namespace StrongerTogether.Server.Data.Configuration
                     Title = "Chin Ups",
                     CreatedAt = DateTime.UtcNow,
                     Description = "Grab the bar shoulder width apart with a supinated grip (palms facing you). With your body hanging and arms fully extended, pull yourself up until your chin is past the bar. Slowly return to starting position. Repeat.",
-                    Difficulty = "Intermidiate",
+                    Difficulty = "Intermediate",
                     Duration = 25,
                     TargetMuscles = "Back",
                     VideoUrl = "https://media.musclewiki.com/media/uploads/videos/branded/male-bodyweight-chinup-side.mp4#t=0.1"

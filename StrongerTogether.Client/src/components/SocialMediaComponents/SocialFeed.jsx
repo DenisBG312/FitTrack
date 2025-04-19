@@ -107,7 +107,7 @@ const SocialFeed = () => {
     fetchPosts();
   }, [activeTab]);
 
-  const handlePostCreated = async (newPost) => {
+  const handlePostCreated = async () => {
     setShowCreateModal(false);
 
     try {
@@ -328,10 +328,11 @@ const SocialFeed = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.1 + (index * 0.1) }}
                   onClick={() => setActiveTab(tabValue)}
-                  className={`relative flex items-center gap-1.5 py-2.5 px-3 text-xs font-medium transition-colors duration-200 ${isActive
-                    ? "text-amber-500"
-                    : "text-gray-400 hover:text-gray-300"
-                    }`}
+                  className={`relative flex items-center gap-1.5 py-2.5 px-3 text-xs font-medium transition-colors duration-200 ${
+                    isActive
+                      ? "text-amber-500"
+                      : "text-gray-400 hover:text-gray-300"
+                  }`}
                 >
                   {tabIcons[tabValue]}
                   {tab}
