@@ -17,7 +17,7 @@ namespace StrongerTogether.Server.Controllers
         }
 
         [HttpGet("{location}")]
-        public async Task<IActionResult> GetGymsInLocation(string location, int page = 1, int pageSize = 10)
+        public async Task<IActionResult> GetGymsInLocation(string location, int page = 1, int pageSize = 9)
         {
             var url = $"https://www.oink.bg/search/{HttpUtility.UrlEncode(location)}/fitnes-klub?sort=1";
 

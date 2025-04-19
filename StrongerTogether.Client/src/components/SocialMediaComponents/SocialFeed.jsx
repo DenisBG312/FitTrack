@@ -8,6 +8,7 @@ import { HeartIcon as HeartSolidIcon, BookmarkIcon as BookmarkSolidIcon } from "
 import moment from "moment";
 import axios from "axios";
 import CreatePostModal from "./CreatePostModal";
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence, useScroll, useTransform, useMotionTemplate, useSpring } from "framer-motion";
 import Footer from "../Footer";
 import LoadingSpinner from "../LoadingSpinner";
@@ -373,7 +374,7 @@ const SocialFeed = () => {
                     </div>
 
                     <div className="mb-3">
-                      <h3 className="text-lg font-medium mb-1.5 text-gray-100">{post.title}</h3>
+                      <h3 className="text-lg font-medium mb-1.5 text-yellow-500">{post.title}</h3>
                       <p className="text-gray-300 text-sm whitespace-pre-line leading-relaxed">{post.content}</p>
                     </div>
 

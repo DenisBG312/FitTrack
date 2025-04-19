@@ -9,7 +9,7 @@ const GymList = () => {
     const [loading, setLoading] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const gymsPerPage = 10;
+    const gymsPerPage = 9;
     const [totalGyms, setTotalGyms] = useState(0);
     const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
 
