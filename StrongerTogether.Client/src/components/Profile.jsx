@@ -230,6 +230,7 @@ const Profile = () => {
   }
 
   return (
+    <>
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -536,6 +537,10 @@ const Profile = () => {
         onUpdate={handleUpdate}
       />
     </motion.div>
+
+    <Footer />
+    
+    </>
   );
 };
 

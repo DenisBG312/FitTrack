@@ -9,6 +9,7 @@ import AddWorkoutModal from "./AddWorkoutModal";
 import EditWorkoutModal from "./EditWorkoutModal";
 import LoadingSpinner from "../LoadingSpinner";
 import ErrorAlert from "../ErrorAlert";
+import Footer from "../Footer";
 
 const Workouts = () => {
   const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
@@ -231,6 +232,7 @@ const Workouts = () => {
   };
 
   return (
+    <>
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white py-12 px-4 sm:px-6">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -420,6 +422,9 @@ const Workouts = () => {
       </motion.div>
 
     </div>
+
+    <Footer />
+    </>
   );
 };
 
