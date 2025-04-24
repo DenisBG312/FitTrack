@@ -17,6 +17,7 @@ import moment from "moment";
 import axios from "axios";
 import CreateComment from "./CreateComment";
 import LoadingSpinner from "../LoadingSpinner";
+import Footer from "../Footer";
 
 const Comment = ({ comment, currentUser, onDelete, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -300,7 +301,8 @@ const PostDetails = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto bg-gray-900 md:bg-gray-800 min-h-screen text-gray-100 animate-fadeIn">
+    <>
+    <div className="max-w-2xl mx-auto bg-gray-900 md:bg-gray-800 min-h-screen text-gray-100 animate-fadeIn mt-5 mb-5">
       <div className="sticky top-0 z-10 bg-gray-800 bg-opacity-95 backdrop-blur-md p-3 md:p-4 border-b border-gray-700 flex items-center justify-between shadow-md">
         <div className="flex items-center">
           <Link to="/community" className="mr-3 text-yellow-500 hover:text-yellow-400 transition-colors p-1">
@@ -495,7 +497,11 @@ const PostDetails = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
         </svg>
       </button>
+      
     </div>
+
+    <Footer className="w-full bg-gray-800 text-gray-300"/>
+    </>
   );
 };
 
