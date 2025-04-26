@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StrongerTogether.Server.Data;
@@ -11,9 +12,11 @@ using StrongerTogether.Server.Data;
 namespace StrongerTogether.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250426175405_SeededLikes")]
+    partial class SeededLikes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,7 +83,7 @@ namespace StrongerTogether.Server.Migrations
                             Id = new Guid("f9410e62-5c2c-418a-ae54-4c2333225a83"),
                             Calories = 165,
                             Carbs = 0f,
-                            Date = new DateTime(2025, 4, 26, 18, 8, 9, 123, DateTimeKind.Utc).AddTicks(128),
+                            Date = new DateTime(2025, 4, 26, 17, 54, 4, 831, DateTimeKind.Utc).AddTicks(4734),
                             Fats = 3.6f,
                             FoodName = "Chicken Breast",
                             MealType = "Lunch",
@@ -92,7 +95,7 @@ namespace StrongerTogether.Server.Migrations
                             Id = new Guid("97e38abb-855b-4c13-a91b-69b6307cc81d"),
                             Calories = 215,
                             Carbs = 45f,
-                            Date = new DateTime(2025, 4, 26, 18, 8, 9, 123, DateTimeKind.Utc).AddTicks(134),
+                            Date = new DateTime(2025, 4, 26, 17, 54, 4, 831, DateTimeKind.Utc).AddTicks(4741),
                             Fats = 1.5f,
                             FoodName = "Brown Rice",
                             MealType = "Lunch",
@@ -104,7 +107,7 @@ namespace StrongerTogether.Server.Migrations
                             Id = new Guid("d7e2d58b-23dd-477c-a0f3-2f0c08d8cf77"),
                             Calories = 55,
                             Carbs = 11f,
-                            Date = new DateTime(2025, 4, 26, 18, 8, 9, 123, DateTimeKind.Utc).AddTicks(139),
+                            Date = new DateTime(2025, 4, 26, 17, 54, 4, 831, DateTimeKind.Utc).AddTicks(4745),
                             Fats = 0.6f,
                             FoodName = "Broccoli",
                             MealType = "Lunch",
@@ -145,16 +148,6 @@ namespace StrongerTogether.Server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("comments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("0d20ac4c-047e-4ed4-acf8-f19bb8fbcc30"),
-                            Content = "Great post, John! I really liked it 🙌.",
-                            CreatedAt = new DateTime(2025, 4, 26, 18, 8, 9, 122, DateTimeKind.Utc).AddTicks(7838),
-                            PostId = new Guid("293472da-f1a8-4436-836c-962e18ca4df1"),
-                            UserId = new Guid("b916bbda-1421-4012-bd2a-1775ca0595de")
-                        });
                 });
 
             modelBuilder.Entity("StrongerTogether.Server.Models.Follow", b =>
@@ -203,7 +196,7 @@ namespace StrongerTogether.Server.Migrations
                         {
                             UserId = new Guid("b916bbda-1421-4012-bd2a-1775ca0595de"),
                             PostId = new Guid("293472da-f1a8-4436-836c-962e18ca4df1"),
-                            LikedAt = new DateTime(2025, 4, 26, 18, 8, 9, 122, DateTimeKind.Utc).AddTicks(9195)
+                            LikedAt = new DateTime(2025, 4, 26, 17, 54, 4, 831, DateTimeKind.Utc).AddTicks(3576)
                         });
                 });
 
@@ -261,7 +254,7 @@ namespace StrongerTogether.Server.Migrations
                         {
                             Id = new Guid("da24e6a1-e5f8-4e43-b848-06e14730f8ba"),
                             Content = "This is my body after 3 months of hardworking and eating these chicken breasts. Check them out, you will not regret it!",
-                            CreatedAt = new DateTime(2025, 4, 26, 18, 8, 9, 123, DateTimeKind.Utc).AddTicks(881),
+                            CreatedAt = new DateTime(2025, 4, 26, 17, 54, 4, 831, DateTimeKind.Utc).AddTicks(5634),
                             ImageUrl = "/seed_uploads/user.jpg",
                             NutritionLogId = new Guid("f9410e62-5c2c-418a-ae54-4c2333225a83"),
                             Title = "My body ater 3 months",
@@ -271,7 +264,7 @@ namespace StrongerTogether.Server.Migrations
                         {
                             Id = new Guid("293472da-f1a8-4436-836c-962e18ca4df1"),
                             Content = "The linked exercise is the best exercise for building muscle in the arms 🔥.",
-                            CreatedAt = new DateTime(2025, 4, 26, 18, 8, 9, 123, DateTimeKind.Utc).AddTicks(901),
+                            CreatedAt = new DateTime(2025, 4, 26, 17, 54, 4, 831, DateTimeKind.Utc).AddTicks(5644),
                             ImageUrl = "/seed_uploads/curl-bar-exercise.jpg",
                             Title = "The best exercise for arms",
                             UserId = new Guid("20f75c7d-625e-45a8-8b4e-501810e94160"),
@@ -336,10 +329,10 @@ namespace StrongerTogether.Server.Migrations
                         new
                         {
                             Id = new Guid("dc0372c1-6da4-4c61-a84b-8c6af860b77c"),
-                            CreatedAt = new DateTime(2025, 4, 26, 18, 8, 9, 123, DateTimeKind.Utc).AddTicks(1564),
+                            CreatedAt = new DateTime(2025, 4, 26, 17, 54, 4, 831, DateTimeKind.Utc).AddTicks(6327),
                             Email = "admin@gmail.com",
                             Height = 189m,
-                            Password = "$2a$11$GPGSYCMgDv/MOy5pYzKDSuGEGZCywEYs53aU1xxqJQO5M6.3rkpDC",
+                            Password = "$2a$11$QfqY48Pru/2OXhQ6gbxt7./dtLHOkFVypaGpXPCsOZ0r5szwsLO.G",
                             ProfileImageUrl = "/seed_uploads/admin.png",
                             Role = "Admin",
                             Username = "Admin",
@@ -348,10 +341,10 @@ namespace StrongerTogether.Server.Migrations
                         new
                         {
                             Id = new Guid("20f75c7d-625e-45a8-8b4e-501810e94160"),
-                            CreatedAt = new DateTime(2025, 4, 26, 18, 8, 9, 123, DateTimeKind.Utc).AddTicks(1570),
+                            CreatedAt = new DateTime(2025, 4, 26, 17, 54, 4, 831, DateTimeKind.Utc).AddTicks(6332),
                             Email = "user@gmail.com",
                             Height = 178m,
-                            Password = "$2a$11$iQh9JM27/g7a3d76PVoe3O78ZAzyiBYhahZpzTiRpguR13LvW2oeu",
+                            Password = "$2a$11$KbB6TP7rElFbvxpoEm8e7.u1cOYkiX/vbKWK9HPOFt3z7TIxHkrae",
                             ProfileImageUrl = "/seed_uploads/user.jpg",
                             Role = "User",
                             Username = "JohnFit",
@@ -360,10 +353,10 @@ namespace StrongerTogether.Server.Migrations
                         new
                         {
                             Id = new Guid("b916bbda-1421-4012-bd2a-1775ca0595de"),
-                            CreatedAt = new DateTime(2025, 4, 26, 18, 8, 9, 123, DateTimeKind.Utc).AddTicks(1574),
+                            CreatedAt = new DateTime(2025, 4, 26, 17, 54, 4, 831, DateTimeKind.Utc).AddTicks(6348),
                             Email = "user2@gmail.com",
                             Height = 168m,
-                            Password = "$2a$11$P3vC61maEI8NmQJ41wUfUeCPRoByaPK698S/oyP2AluhybAWkQwTG",
+                            Password = "$2a$11$Wic2fvhln9dpNnAg4.tynu4khiVN51PGwUYhHraUi3a4dJl3TuKk.",
                             ProfileImageUrl = "/seed_uploads/user-girl.jpg",
                             Role = "User",
                             Username = "JaneFit",
@@ -427,7 +420,7 @@ namespace StrongerTogether.Server.Migrations
                         new
                         {
                             Id = new Guid("3ee02889-3097-4d1e-82b8-88e54fea642e"),
-                            CreatedAt = new DateTime(2025, 4, 26, 18, 8, 9, 598, DateTimeKind.Utc).AddTicks(4128),
+                            CreatedAt = new DateTime(2025, 4, 26, 17, 54, 5, 287, DateTimeKind.Utc).AddTicks(4063),
                             Description = "Grab the bar shoulder width apart with a supinated grip (palms facing you). With your body hanging and arms fully extended, pull yourself up until your chin is past the bar. Slowly return to starting position. Repeat.",
                             Difficulty = "Intermediate",
                             Duration = 25,
@@ -439,7 +432,7 @@ namespace StrongerTogether.Server.Migrations
                         new
                         {
                             Id = new Guid("15858f90-da40-4356-838e-c9704f48006e"),
-                            CreatedAt = new DateTime(2025, 4, 26, 18, 8, 9, 598, DateTimeKind.Utc).AddTicks(4146),
+                            CreatedAt = new DateTime(2025, 4, 26, 17, 54, 5, 287, DateTimeKind.Utc).AddTicks(4082),
                             Description = "Stand up straight with a dumbbell in each hand at arm's length. Raise one dumbbell and twist your forearm until it is vertical and your palm faces the shoulder. Lower to original position and repeat with opposite arm.",
                             Difficulty = "Beginner",
                             Duration = 25,
