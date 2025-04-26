@@ -40,11 +40,25 @@ namespace StrongerTogether.Server.Data.Configuration
                 ProfileImageUrl = "/seed_uploads/user.jpg"
             };
 
+            var secondUser = new User()
+            {
+                Id = Guid.Parse("b916bbda-1421-4012-bd2a-1775ca0595de"),
+                Email = "user2@gmail.com",
+                Height = 168,
+                Weight = 70,
+                CreatedAt = DateTime.UtcNow,
+                Username = "JaneFit",
+                Role = "User",
+                ProfileImageUrl = "/seed_uploads/user-girl.jpg"
+            };
+
             admin.Password = BCrypt.Net.BCrypt.HashPassword("Admin123!");
             user.Password = BCrypt.Net.BCrypt.HashPassword("User123!");
+            secondUser.Password = BCrypt.Net.BCrypt.HashPassword("User123!");
 
             users.Add(admin);
             users.Add(user);
+            users.Add(secondUser);
 
             return users;
         }
